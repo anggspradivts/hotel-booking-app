@@ -1,8 +1,12 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { redirect, useRouter } from "next/navigation";
+import { user } from "@/lib/user";
 
 const SignupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -11,12 +15,41 @@ const SignupSchema = z.object({
 });
 
 const SignUpPage = () => {
+  useEffect(() => {
+    if (user) {
+      redirect("/");
+    }
+  }, []);
+
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof SignupSchema>>({
     resolver: zodResolver(SignupSchema),
   });
-  const onSubmit = (data: z.infer<typeof SignupSchema>) => {
-    console.log("submitted");
-    console.log(data);
+  const onSubmit = async (data: z.infer<typeof SignupSchema>) => {
+    try {
+      const res = await axios.post("/api/auth/sign-up", data);
+      const { token } = res.data;
+      if (token) {
+        localStorage.setItem("token", token);
+        toast.success("Successfully signed up");
+        router.push("/");
+      }
+    } catch (error: any) {
+      if (error.response && error.response.status) {
+        const statusCode = error.response.status;
+        switch (statusCode) {
+          case 409:
+            toast.error("This account allready exist, try login");
+            break;
+          case 500:
+            toast.error("Internal server error");
+            break;
+          default:
+            toast.error("Something goes wrong when sign in");
+        }
+      }
+    }
   };
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -34,8 +67,10 @@ const SignUpPage = () => {
               {...form.register("name", { required: "Name is required" })}
             />
             {form.formState.errors.name && (
-                <p className="text-red-500 mt-1">{form.formState.errors.name.message}</p>
-              )}
+              <p className="text-red-500 mt-1">
+                {form.formState.errors.name.message}
+              </p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700" htmlFor="email">
@@ -54,8 +89,10 @@ const SignUpPage = () => {
               })}
             />
             {form.formState.errors.email && (
-                <p className="text-red-500 mt-1">{form.formState.errors.email.message}</p>
-              )}
+              <p className="text-red-500 mt-1">
+                {form.formState.errors.email.message}
+              </p>
+            )}
           </div>
           <div className="mb-4">
             <label className="block text-gray-700" htmlFor="password">
@@ -74,8 +111,10 @@ const SignUpPage = () => {
               })}
             />
             {form.formState.errors.password && (
-                <p className="text-red-500 mt-1">{form.formState.errors.password.message}</p>
-              )}
+              <p className="text-red-500 mt-1">
+                {form.formState.errors.password.message}
+              </p>
+            )}
           </div>
           <button
             type="submit"
@@ -84,6 +123,18 @@ const SignUpPage = () => {
             Sign Up
           </button>
         </form>
+        <div>
+          <p>
+            Allready have an account?,{" "}
+            <span
+              role="button"
+              className="text-sky-500 hover:text-sky-600"
+              onClick={() => router.push("/sign-in")}
+            >
+              try LogIn
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

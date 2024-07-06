@@ -9,14 +9,10 @@ interface Payload {
   id: string;
   email: string;
 }
-export const signToken = (payload: Payload) => {
+export const signToken = (payload: object): string => {
   return jwt.sign(payload, secret, { expiresIn: "1h" })
 };
 
-interface Token {
-  id: string;
-  email: string;
-}
-export const verifyToken = (token: Token) => {
+export const verifyToken = (token: string): object | string => {
   return jwt.verify(token, secret);
 }
