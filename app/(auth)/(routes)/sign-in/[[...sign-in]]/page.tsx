@@ -5,22 +5,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { redirect, useRouter } from "next/navigation";
-import { user } from "@/lib/user";
+import { useRouter } from "next/navigation";
 
 const SignInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
+
 const SignInPage = () => {
+  const router = useRouter();
   useEffect(() => {
-    if (user) {
-      redirect("/");
+    if (localStorage.getItem("token")) {
+      router.push("/");
     }
   }, []);
 
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),
@@ -29,11 +29,11 @@ const SignInPage = () => {
   const onSubmit = async (data: z.infer<typeof SignInSchema>) => {
     try {
       const res = await axios.post("/api/auth/sign-in", data);
-      const { token, name } = res.data;
-      if (token) {
+      if (res.status === 200) {
+        const { message, token } = res.data;
         localStorage.setItem("token", token)
-        toast.success("Successfully signed in");
-        router.push("/");
+        toast.success(message);
+        window.location.reload();
       }
     } catch (error: any) {
       if (error.response && error.response.status) {

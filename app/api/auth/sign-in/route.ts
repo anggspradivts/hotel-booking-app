@@ -2,9 +2,10 @@ import bcrypt from "bcryptjs";
 import { signToken } from "@/utils/jwt";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { serialize } from "cookie";
 
 export async function POST(
-  req: Request
+  req: Request,
 ) {
   try {
     const { email, password } = await req.json();
@@ -14,14 +15,27 @@ export async function POST(
         email: email,
       }
     });
+
     if (!checkUser || !(await bcrypt.compare(password, checkUser.password))) {
       return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
     }
 
     const token = signToken({ email: checkUser.email });
-    const name = checkUser.name;
-    return NextResponse.json({ token }, { status: 200 });
+
+    const serializedCookie = serialize('token', token, {
+      httpOnly: true, //token is not accessible from client side if "true"
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600,
+      path: '/'
+    });
+
+    const response = NextResponse.json({ message: "Success authenticated", token: token }, { status: 200 });
+    response.headers.set('Set-Cookie', serializedCookie);
+
+    return response;
   } catch (error) {
-    console.log("[ERR_LOGIN]", error)
+    console.log("[ERR_LOGIN]", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }

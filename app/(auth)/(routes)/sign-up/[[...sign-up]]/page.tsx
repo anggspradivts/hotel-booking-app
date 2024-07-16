@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { redirect, useRouter } from "next/navigation";
-import { user } from "@/lib/user";
 
 const SignupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -16,7 +15,7 @@ const SignupSchema = z.object({
 
 const SignUpPage = () => {
   useEffect(() => {
-    if (user) {
+    if (localStorage.getItem("token")) {
       redirect("/");
     }
   }, []);
@@ -29,11 +28,11 @@ const SignUpPage = () => {
   const onSubmit = async (data: z.infer<typeof SignupSchema>) => {
     try {
       const res = await axios.post("/api/auth/sign-up", data);
-      const { token } = res.data;
+      const { message, token } = res.data;
       if (token) {
         localStorage.setItem("token", token);
-        toast.success("Successfully signed up");
-        router.push("/");
+        toast.success(message || "Successfully signed up");
+        window.location.reload();
       }
     } catch (error: any) {
       if (error.response && error.response.status) {

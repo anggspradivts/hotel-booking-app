@@ -1,30 +1,30 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/utils/jwt";
 import { db } from "@/lib/db";
+import { parse } from "cookie";
 
 export async function GET(req: Request) {
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+
+    const cookies = parse(req.headers.get("cookie") || (""));
+    const token = cookies.token;
+
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    const token = authHeader.split(' ')[1];
     const decodedToken = verifyToken(token) as { email: string } | string;
 
-    // console.log("decode", decodedToken)
     if (!decodedToken) {
-      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
 
     let userEmail: string | null = null;
-
     if (typeof decodedToken === 'object' && decodedToken.email) {
       userEmail = decodedToken.email;
     }
-
     if (!userEmail) {
-      return 
+      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
     };
     
     const user = await db.user.findUnique({
