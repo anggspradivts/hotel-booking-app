@@ -30,7 +30,7 @@ export async function POST(
       path: '/'
     });
 
-    const response = NextResponse.json({ message: "Success authenticated", token: token }, { status: 200 });
+    const response = NextResponse.json({ message: "Success authenticated" }, { status: 200 });
     response.headers.set('Set-Cookie', serializedCookie);
 
     return response;

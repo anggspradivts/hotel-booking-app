@@ -17,7 +17,7 @@ export async function POST(
         email,
       }
     });
-    if (checkUser) return NextResponse.json({ message: "This acccount is allready signed up" }, { status: 405 })
+    if (checkUser) return NextResponse.json({ message: "This acccount is allready signed up, try signin" }, { status: 405 })
     
     //Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,7 +41,7 @@ export async function POST(
       path: '/'
     });
 
-    const response = NextResponse.json({ message: "Successfully signed up", token: token }, { status: 200 });
+    const response = NextResponse.json({ message: "Successfully signed up" }, { status: 200 });
     response.headers.set('Set-Cookie', serializedCookie); //set the token on cookie
 
     return response;

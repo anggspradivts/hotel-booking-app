@@ -28,28 +28,19 @@ const SignUpPage = () => {
   const onSubmit = async (data: z.infer<typeof SignupSchema>) => {
     try {
       const res = await axios.post("/api/auth/sign-up", data);
-      const { message, token } = res.data;
-      if (token) {
-        localStorage.setItem("token", token);
+      const { message } = res.data;
+      if (res.statusText === "OK") {
         toast.success(message || "Successfully signed up");
         window.location.reload();
       }
     } catch (error: any) {
-      if (error.response && error.response.status) {
-        const statusCode = error.response.status;
-        switch (statusCode) {
-          case 409:
-            toast.error("This account allready exist, try login");
-            break;
-          case 500:
-            toast.error("Internal server error");
-            break;
-          default:
-            toast.error("Something goes wrong when sign in");
-        }
+      if (error.response && error.response.data.message) {
+        const errorMessage = error.response.data.message;
+        toast.error(errorMessage)
       }
     }
   };
+  
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">

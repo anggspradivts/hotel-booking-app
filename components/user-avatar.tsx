@@ -6,58 +6,81 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const UserAvatar = () => {
+  const [isHovered, setIsHovered] = useState(false);
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
 
+  const handleLogOut =  async () => {
+    try {
+      const res = await axios.get("/api/auth/logout");
+      const { message } = res.data;
+      toast.success(message || "Success logged out")
+      window.location.reload()
+    } catch (error) {
+      toast.error("Something went wrong")
+    }
+  }
+
+  const handleErrorResponse = (error: any) => {
+    if (error.response && error.response.data) {
+      const responseStatus = error.response.data.message;
+      toast.error(responseStatus)
+    } else {
+      toast.error("Something went wrong");
+    }
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
+      console.log("p")
       try {
-        const token = localStorage.getItem("token");
-
-        const tokenExpired = isTokenExpired(token);
-        if (tokenExpired) return localStorage.removeItem("token");
-
         const res = await axios.get("/api/auth/user");
         const { email, name } = res.data;
-
         setEmail(email);
         setName(name);
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          // Token is expired or invalid
-          toast.error("Session expired. Please log in again.");
-          localStorage.removeItem("token"); // Remove invalid token
-          router.push("/login"); // Redirect to login page
-        } else {
-          throw new Error("Something went wrong");
-        }
+        handleErrorResponse(error)
       } finally {
         setLoading(false);
       }
     };
     fetchUser();
-  }, [email, name]);
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="">
       {name ? (
         <div className="">
-          <span className="px-3 p-1 rounded-full bg-sky-500">
+          <span
+            className="px-3 p-1 rounded-full bg-slate-500 text-white"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             {name.charAt(0)}
           </span>
-          <span>email:{email}</span>
-          <button
-            className="bg-red-500 text-white p-1 rounded-xl"
-            onClick={() => {
-              localStorage.removeItem("token");
-              window.location.reload();
-            }}
-          >
-            Logout
-          </button>
+          {isHovered && (
+            <div
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              className="absolute flex flex-col bg-white border border-slate-400 p-2 rounded-lg"
+            >
+              <span>name: {name}</span>
+              <span>email:{email}</span>
+              <button
+                className="bg-red-500 text-white p-1 rounded"
+                onClick={handleLogOut}
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-x-3">

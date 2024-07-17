@@ -30,24 +30,14 @@ const SignInPage = () => {
     try {
       const res = await axios.post("/api/auth/sign-in", data);
       if (res.status === 200) {
-        const { message, token } = res.data;
-        localStorage.setItem("token", token)
+        const { message } = res.data;
         toast.success(message);
-        window.location.reload();
+        window.location.href = "/";
       }
     } catch (error: any) {
-      if (error.response && error.response.status) {
-        const statusCode = error.response.status;
-        switch (statusCode) {
-          case 405:
-            toast.error("Account not found");
-            break;
-          case 401:
-            toast.error("password or email invalid");
-            break;
-          default:
-            toast.error("Something goes wrong when sign in");
-        }
+      if (error.response && error.response.data) {
+        const errorMessage = error.response.data.messagge;
+        toast.error(errorMessage)
       }
     }
   };
