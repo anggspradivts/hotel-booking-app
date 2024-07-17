@@ -13,17 +13,7 @@ const Navbar = () => {
     <div>
       <UserAvatar />
 
-      <button
-        className="bg-red-500 text-white p-1 rounded-xl"
-        onClick={() => {
-          const removeToken = localStorage.removeItem("token");
-          
-          window.location.reload();
-          console.log("refresh")
-        }}
-      >
-        Logout
-      </button>
+      
     </div>
   );
 };

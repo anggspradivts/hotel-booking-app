@@ -11,7 +11,7 @@ const UserAvatar = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
-  
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -25,7 +25,6 @@ const UserAvatar = () => {
 
         setEmail(email);
         setName(name);
-        
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           // Token is expired or invalid
@@ -46,13 +45,34 @@ const UserAvatar = () => {
     <div className="">
       {name ? (
         <div className="">
-          <span className="px-3 p-1 rounded-full bg-sky-500">{name.charAt(0)}</span>
+          <span className="px-3 p-1 rounded-full bg-sky-500">
+            {name.charAt(0)}
+          </span>
           <span>email:{email}</span>
+          <button
+            className="bg-red-500 text-white p-1 rounded-xl"
+            onClick={() => {
+              localStorage.removeItem("token");
+              window.location.reload();
+            }}
+          >
+            Logout
+          </button>
         </div>
       ) : (
         <div className="space-x-3">
-          <button onClick={() => router.push("sign-in")} className="bg-slate-200 p-2 rounded">SignIn</button>
-          <button onClick={() => router.push("sign-up")} className="bg-slate-200 p-2 rounded">SignUp</button>
+          <button
+            onClick={() => router.push("sign-in")}
+            className="bg-slate-200 p-2 rounded"
+          >
+            SignIn
+          </button>
+          <button
+            onClick={() => router.push("sign-up")}
+            className="bg-slate-200 p-2 rounded"
+          >
+            SignUp
+          </button>
         </div>
       )}
     </div>
