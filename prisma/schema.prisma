@@ -13,11 +13,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Define your data models here
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String   
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role Role @default(USER)
+
+  BookedHistory BookedHistory[]
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model BookedHistory {
+  id String @id @default(uuid())
+
+
+  HotelsBooked String
+  hotels Hotel @relation(fields: [HotelsBooked], references: [id])
+
+  UserBooked String
+  booked User @relation(fields: [UserBooked], references: [id])
+}
+
+model Hotel {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  slug        String  @unique
+
+  provinceId String?
+  province   Province? @relation(fields: [provinceId], references: [id])
+
+  Booked BookedHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Province {
+  id   String @id @default(uuid())
+  name String
+  slug String @unique
+
+  Hotels Hotel[]
+}
+
+// model Facilities {
+//   id   String @id @default(uuid())
+//   name String
+//   slug String
+// }

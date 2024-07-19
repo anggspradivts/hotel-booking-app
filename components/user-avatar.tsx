@@ -7,27 +7,29 @@ import toast from "react-hot-toast";
 
 const UserAvatar = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [name, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
 
-  const handleLogOut =  async () => {
+  const handleLogOut = async () => {
     try {
       const res = await axios.get("/api/auth/logout");
       const { message } = res.data;
-      toast.success(message || "Success logged out")
-      window.location.reload()
+      toast.success(message || "Success logged out");
+      window.location.reload(); 
+      // router.push("/sign-in");
     } catch (error) {
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
     }
-  }
+  };
 
   const handleErrorResponse = (error: any) => {
     if (error.response && error.response.data) {
       const responseStatus = error.response.data.message;
-      toast.error(responseStatus)
+      console.log(responseStatus)
     } else {
       toast.error("Something went wrong");
     }
@@ -35,14 +37,17 @@ const UserAvatar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      console.log("p")
       try {
         const res = await axios.get("/api/auth/user");
-        const { email, name } = res.data;
+        const { email, name, role } = res.data;
         setEmail(email);
         setName(name);
+        console.log()
+        if (role === "ADMIN") {
+          setIsAdmin(true);
+        }
       } catch (error) {
-        handleErrorResponse(error)
+        handleErrorResponse(error);
       } finally {
         setLoading(false);
       }
@@ -53,6 +58,7 @@ const UserAvatar = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
 
   return (
     <div className="">
@@ -79,6 +85,11 @@ const UserAvatar = () => {
               >
                 Logout
               </button>
+              {isAdmin && (
+                <span className="text-center bg-slate-500 text-white p-1 rounded">
+                  Admin Mode
+                </span>
+              )}
             </div>
           )}
         </div>

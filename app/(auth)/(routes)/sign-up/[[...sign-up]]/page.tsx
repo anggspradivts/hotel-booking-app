@@ -31,7 +31,7 @@ const SignUpPage = () => {
       const { message } = res.data;
       if (res.statusText === "OK") {
         toast.success(message || "Successfully signed up");
-        window.location.reload();
+        window.location.href = "/";
       }
     } catch (error: any) {
       if (error.response && error.response.data.message) {

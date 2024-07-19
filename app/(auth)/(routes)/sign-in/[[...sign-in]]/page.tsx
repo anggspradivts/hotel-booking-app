@@ -1,26 +1,26 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import clsx from "clsx";
 
 const SignInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-
 const SignInPage = () => {
+  const [isError, setIsError] = useState(false);
   const router = useRouter();
   useEffect(() => {
     if (localStorage.getItem("token")) {
       router.push("/");
     }
   }, []);
-
 
   const form = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),
@@ -31,20 +31,26 @@ const SignInPage = () => {
       const res = await axios.post("/api/auth/sign-in", data);
       if (res.status === 200) {
         const { message } = res.data;
+        console.log(message);
         toast.success(message);
         window.location.href = "/";
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
-        const errorMessage = error.response.data.messagge;
-        toast.error(errorMessage)
+        const errorMessage = error.response.data.message;
+        setIsError(true);
+        toast.error(errorMessage);
       }
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div
+        className={clsx("bg-white p-8 rounded-lg shadow-lg w-full max-w-md", {
+          "shadow-red-500 shadow-md": isError === true,
+        })}
+      >
         <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="mb-4">
@@ -103,7 +109,7 @@ const SignInPage = () => {
             Dont have any account?,{" "}
             <span
               role="button"
-              className="p-1 text-sky-500 hover:text-sky-600 border-b border-sky-500"
+              className="p-1 text-sky-500 hover:text-sky-600"
               onClick={() => router.push("/sign-up")}
             >
               register here

@@ -20,7 +20,7 @@ export async function POST(
       return NextResponse.json({ message: "Invalid email or password" }, { status: 401 });
     }
 
-    const token = signToken({ email: checkUser.email });
+    const token = await signToken({ email: checkUser.email });
 
     const serializedCookie = serialize('token', token, {
       httpOnly: true, //token is not accessible from client side if "true"

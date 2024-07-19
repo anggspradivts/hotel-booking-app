@@ -19,9 +19,9 @@ export async function GET(req: Request) {
       }, { status: 401 })
     }
 
-    const decodedToken = verifyToken(token) as { email: string } | string;
+    const decodedToken = await verifyToken(token) as { payload: { email: string } } | string;
     if (!decodedToken) {
-      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+      return NextResponse.json({ message: "Invalid anjay" }, { status: 401 });
     }
 
     if (tokenExpired) { // Handle if the token expired
@@ -38,11 +38,12 @@ export async function GET(req: Request) {
 
       return response;
     }
- 
+
     let userEmail: string | null = null;
-    if (typeof decodedToken === 'object' && decodedToken.email) {
-      userEmail = decodedToken.email;
+    if (typeof decodedToken === 'object') {
+      userEmail = decodedToken.payload.email;
     }
+    
     if (!userEmail) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
     };
@@ -56,7 +57,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ email: user.email, name: user.name }, { status: 200 });
+    return NextResponse.json({ email: user.email, name: user.name, role: user.role }, { status: 200 });
   } catch (error) {
     console.log("[ERR_FETCH_USER]", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
