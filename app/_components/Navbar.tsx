@@ -19,7 +19,7 @@ const Navbar = () => {
   return (
     <div
       className={clsx(
-        "bg-green-600 text-white px-28 p-1",
+        "bg-green-600 text-white md:px-28 p-1",
         "grid grid-cols-1 h-24",
         ""
       )}

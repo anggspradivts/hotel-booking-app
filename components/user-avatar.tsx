@@ -57,7 +57,7 @@ const UserAvatar = () => {
       }
     };
     fetchUser();
-  }, []);
+  }, [name, email]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -95,28 +95,30 @@ const UserAvatar = () => {
               >
                 Logout
               </button>
-              {isAdmin && isAdminPage ? (
-                <button
-                  onClick={() => router.push("/")}
-                  className="text-center bg-slate-500 text-white p-1 rounded"
-                >
-                  Exit Admin Mode
-                </button>
-              ) : (
-                <button
-                  onClick={() => router.push("/admin")}
-                  className="text-center bg-slate-500 text-white p-1 rounded"
-                >
-                  Admin Mode
-                </button>
-              )}
+              {isAdmin ? (
+                isAdminPage ? (
+                  <button
+                    onClick={() => router.push("/")}
+                    className="text-center bg-slate-500 text-white p-1 rounded"
+                  >
+                    Exit Admin Mode
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => router.push("/admin")}
+                    className="text-center bg-slate-500 text-white p-1 rounded"
+                  >
+                    Admin Mode
+                  </button>
+                )
+              ) : null}
             </div>
           )}
         </div>
       ) : (
         <div className="space-x-3">
           <button
-            onClick={() => router.push("sign-in")}
+            onClick={() => router.push("/sign-in")}
             className={clsx(
               "bg-slate-200 p-2 rounded text-black",
               "hover:bg-slate-300"
@@ -125,7 +127,7 @@ const UserAvatar = () => {
             SignIn
           </button>
           <button
-            onClick={() => router.push("sign-up")}
+            onClick={() => router.push("/sign-up")}
             className={clsx(
               "bg-slate-200 p-2 rounded text-black",
               "hover:bg-slate-300"

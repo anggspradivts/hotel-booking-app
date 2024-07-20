@@ -35,23 +35,30 @@ enum Role {
 model BookedHistory {
   id String @id @default(uuid())
 
-  HotelsBooked String
-  hotels       Hotel  @relation(fields: [HotelsBooked], references: [id])
+  PropertiesBooked String
+  properties       Property @relation(fields: [PropertiesBooked], references: [id])
 
   UserBooked String
   booked     User   @relation(fields: [UserBooked], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Hotel {
+model Property {
   id          String  @id @default(uuid())
-  name        String
+  name        String @default("property")
   description String?
-  slug        String  @unique
+  slug        String?  @unique
+  confirmed   Boolean @default(false)
 
   provinceId String?
   province   Province? @relation(fields: [provinceId], references: [id])
 
-  Booked BookedHistory[]
+  PropertyTypeId String
+  propertyType   PropertyType? @relation(fields: [PropertyTypeId], references: [id])
+
+  Booked       BookedHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,11 +69,18 @@ model Province {
   name String
   slug String @unique
 
-  Hotels Hotel[]
+  Properties Property[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// model Facilities {
-//   id   String @id @default(uuid())
-//   name String
-//   slug String
-// }
+model PropertyType {
+  id   String @id @default(uuid())
+  name String
+
+  Properties Property[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
