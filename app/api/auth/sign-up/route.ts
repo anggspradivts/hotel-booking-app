@@ -31,7 +31,7 @@ export async function POST(
       }
     });
 
-    const token = await signToken({ email: createUser.email });
+    const token = await signToken({ email: createUser.email, role: createUser.role });
 
     const serializedCookie = serialize('token', token, {
       httpOnly: true,

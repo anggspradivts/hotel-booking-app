@@ -18,7 +18,7 @@ model User {
   name     String
   email    String @unique
   password String
-  role Role @default(USER)
+  role     Role   @default(USER)
 
   BookedHistory BookedHistory[]
 
@@ -29,17 +29,17 @@ model User {
 enum Role {
   USER
   ADMIN
+  PARTNER
 }
 
 model BookedHistory {
   id String @id @default(uuid())
 
-
   HotelsBooked String
-  hotels Hotel @relation(fields: [HotelsBooked], references: [id])
+  hotels       Hotel  @relation(fields: [HotelsBooked], references: [id])
 
   UserBooked String
-  booked User @relation(fields: [UserBooked], references: [id])
+  booked     User   @relation(fields: [UserBooked], references: [id])
 }
 
 model Hotel {

@@ -1,7 +1,8 @@
 import { isTokenExpired } from "@/utils/token-validity";
 import axios from "axios";
+import clsx from "clsx";
 import { cookies } from "next/headers";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -13,13 +14,16 @@ const UserAvatar = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isAdminPage = pathname.startsWith("/admin");
 
   const handleLogOut = async () => {
     try {
       const res = await axios.get("/api/auth/logout");
       const { message } = res.data;
       toast.success(message || "Success logged out");
-      window.location.reload(); 
+      window.location.reload();
       // router.push("/sign-in");
     } catch (error) {
       toast.error("Something went wrong");
@@ -29,7 +33,7 @@ const UserAvatar = () => {
   const handleErrorResponse = (error: any) => {
     if (error.response && error.response.data) {
       const responseStatus = error.response.data.message;
-      console.log(responseStatus)
+      console.log(responseStatus);
     } else {
       toast.error("Something went wrong");
     }
@@ -42,7 +46,7 @@ const UserAvatar = () => {
         const { email, name, role } = res.data;
         setEmail(email);
         setName(name);
-        console.log()
+        console.log(role);
         if (role === "ADMIN") {
           setIsAdmin(true);
         }
@@ -59,13 +63,16 @@ const UserAvatar = () => {
     return <div>Loading...</div>;
   }
 
-
   return (
     <div className="">
       {name ? (
         <div className="">
           <span
-            className="px-3 p-1 rounded-full bg-slate-500 text-white"
+            className={clsx(
+              "px-3 p-1 rounded-full bg-slate-500 text-white",
+              "hover:bg-slate-400",
+              "transition-all duration-100"
+            )}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
@@ -75,7 +82,10 @@ const UserAvatar = () => {
             <div
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className="absolute flex flex-col bg-white border border-slate-400 p-2 rounded-lg"
+              className={clsx(
+                "bg-white border text-black",
+                "right-20 absolute flex flex-col space-y-2 p-2 rounded-lg"
+              )}
             >
               <span>name: {name}</span>
               <span>email:{email}</span>
@@ -85,10 +95,20 @@ const UserAvatar = () => {
               >
                 Logout
               </button>
-              {isAdmin && (
-                <span className="text-center bg-slate-500 text-white p-1 rounded">
+              {isAdmin && isAdminPage ? (
+                <button
+                  onClick={() => router.push("/")}
+                  className="text-center bg-slate-500 text-white p-1 rounded"
+                >
+                  Exit Admin Mode
+                </button>
+              ) : (
+                <button
+                  onClick={() => router.push("/admin")}
+                  className="text-center bg-slate-500 text-white p-1 rounded"
+                >
                   Admin Mode
-                </span>
+                </button>
               )}
             </div>
           )}
@@ -97,13 +117,19 @@ const UserAvatar = () => {
         <div className="space-x-3">
           <button
             onClick={() => router.push("sign-in")}
-            className="bg-slate-200 p-2 rounded"
+            className={clsx(
+              "bg-slate-200 p-2 rounded text-black",
+              "hover:bg-slate-300"
+            )}
           >
             SignIn
           </button>
           <button
             onClick={() => router.push("sign-up")}
-            className="bg-slate-200 p-2 rounded"
+            className={clsx(
+              "bg-slate-200 p-2 rounded text-black",
+              "hover:bg-slate-300"
+            )}
           >
             SignUp
           </button>

@@ -10,9 +10,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const decodedToken = await verifyToken(token) as { role: string };
+  const decodedToken = await verifyToken(token) as { payload: { role: string } };
+  console.log("decc", decodedToken)
 
-  if (!decodedToken || decodedToken.role !== 'ADMIN') {
+  if (!decodedToken || decodedToken.payload.role !== 'ADMIN') {
     const url = req.nextUrl.clone();
     url.pathname = '/forbidden';
     url.searchParams.set('message', 'You do not have permission to access this page');
