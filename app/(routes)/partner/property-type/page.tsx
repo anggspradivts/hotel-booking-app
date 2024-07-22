@@ -3,14 +3,18 @@
 import { fetchUser } from "@/utils/user";
 import axios from "axios";
 import clsx from "clsx";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const PropertyTypePage = () => {
   const [user, setUser] = useState({
-    name: "",
-    // email: "",
+    id: "",
+    username: "",
   });
+
+  const router = useRouter();
+
   const propertyType = [
     {
       id: 1,
@@ -32,9 +36,11 @@ const PropertyTypePage = () => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const user = await fetchUser();
-        if (user) {
-          setUser({ name: user.name });
+        const { name, userId } = await fetchUser();
+        if (name) {
+          setUser({ id: userId, username: name });
+        } else {
+          router.push("/unauthorized");
         }
       } catch (error) {
         toast.error("/Something went wrong");
@@ -43,19 +49,18 @@ const PropertyTypePage = () => {
     getUser();
   }, []);
 
-  const handleCreateProperty = async (propertyType: string) => {
+  const handleCreateProperty = async (propertyType: string, userId: string) => {
     try {
-      const data = JSON.stringify(propertyType); //Incoming data is plain text, format it into object
+      const data = { propertyType, userId }; //Incoming data is plain text, format it into object
       const res = await axios.post("/api/create/property", data);
-      console.log(res.data);
+      // console.log(res.data);
+      const createdProperty = res.data.message;
+      router.push(`/partner/my-property/${createdProperty.id}`);
+      toast.success("Success creating property");
     } catch (error) {
       toast.error("Something went wrong");
     }
   };
-
-  if (!user.name) {
-    return <div>Unauthorized</div>;
-  }
 
   return (
     <div className="md:px-28">
@@ -66,7 +71,7 @@ const PropertyTypePage = () => {
       </div>
       <div className="grid md:grid-cols-3 gap-5">
         {propertyType.map((prop) => (
-          <div key={prop.id} onClick={() => handleCreateProperty(prop.type)}>
+          <div key={prop.id} onClick={() => handleCreateProperty(prop.type, user.id)}>
             <div className=" flex items-center justify-center h-[300px] group relative">
               <img
                 className={clsx(

@@ -1,4 +1,5 @@
 import { isTokenExpired } from "@/utils/token-validity";
+import { fetchUser } from "@/utils/user";
 import axios from "axios";
 import clsx from "clsx";
 import { cookies } from "next/headers";
@@ -40,13 +41,11 @@ const UserAvatar = () => {
   };
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const getUser = async () => {
       try {
-        const res = await axios.get("/api/auth/user");
-        const { email, name, role } = res.data;
+        const { email, name, role } = await fetchUser();
         setEmail(email);
         setName(name);
-        console.log(role);
         if (role === "ADMIN") {
           setIsAdmin(true);
         }
@@ -56,7 +55,7 @@ const UserAvatar = () => {
         setLoading(false);
       }
     };
-    fetchUser();
+    getUser();
   }, [name, email]);
 
   if (loading) {

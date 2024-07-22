@@ -21,6 +21,7 @@ model User {
   role     Role   @default(USER)
 
   BookedHistory BookedHistory[]
+  Properties    Property[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,18 +48,21 @@ model BookedHistory {
 
 model Property {
   id          String  @id @default(uuid())
-  name        String @default("property")
+  name        String  @default("property")
   description String?
-  slug        String?  @unique
+  slug        String? @unique
   confirmed   Boolean @default(false)
+
+  OwnerId String
+  ownerId User?  @relation(fields: [OwnerId], references: [id])
 
   provinceId String?
   province   Province? @relation(fields: [provinceId], references: [id])
 
-  PropertyTypeId String
-  propertyType   PropertyType? @relation(fields: [PropertyTypeId], references: [id])
+  PropertyType String
+  propertyType PropertyType? @relation(fields: [PropertyType], references: [name])
 
-  Booked       BookedHistory[]
+  Booked BookedHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -77,7 +81,7 @@ model Province {
 
 model PropertyType {
   id   String @id @default(uuid())
-  name String
+  name String @unique
 
   Properties Property[]
 

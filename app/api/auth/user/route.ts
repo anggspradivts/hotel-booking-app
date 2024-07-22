@@ -10,13 +10,16 @@ export async function GET(req: Request) {
     const token = cookies.token;
     const tokenExpired = isTokenExpired(token)
 
+    console.log("token from /api/auth/user", token)
+
     if (!token) {
       return NextResponse.json(
       {
         error: "auth-0001",
-        message: "Unauthorized",
+        message: "anjay",
         detail: "The token is not existed in the cookies"
-      }, { status: 401 })
+      }, 
+      { status: 401 })
     }
 
     const decodedToken = await verifyToken(token) as { payload: { email: string } } | string;
@@ -57,7 +60,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ email: user.email, name: user.name, role: user.role }, { status: 200 });
+    return NextResponse.json({ 
+      userId: user.id ,
+      email: user.email, 
+      name: user.name, 
+      role: user.role 
+    }, { status: 200 });
   } catch (error) {
     console.log("[ERR_FETCH_USER]", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });

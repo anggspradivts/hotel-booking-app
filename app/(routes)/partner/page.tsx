@@ -1,4 +1,5 @@
 "use client";
+import { fetchUser } from "@/utils/user";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,19 +10,14 @@ const PartnerLandingPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get("/api/auth/user");
-        const { role } = res.data;
-        if (role === "PARTNER") {
-          setIsPartner(true);
-        }
-      } catch (error) {
-        console.log("Something went wrong");
+    const getUser = async () => {
+      const { role } = await fetchUser();
+      if (role === "PARTNER") {
+        setIsPartner(true);
       }
     };
-    fetchUser();
-  });
+    getUser();
+  }, []);
 
   const handleClick = async () => {
     try {

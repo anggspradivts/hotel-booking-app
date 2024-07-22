@@ -11,7 +11,6 @@ export async function middleware(req: NextRequest) {
   }
 
   const decodedToken = await verifyToken(token) as { payload: { role: string } };
-  console.log("decc", decodedToken)
 
   if (!decodedToken || decodedToken.payload.role !== 'ADMIN') {
     const url = req.nextUrl.clone();
