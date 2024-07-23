@@ -1,29 +1,42 @@
+import { fetchUserServer } from "@/utils/user";
 import { db } from "@/lib/db";
-import { fetchUser } from "@/utils/user";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import PropertyIdPage from "./PropertyIdPage";
 
-const PropertyIdPage = async ({ params }: { params: { propertyId: string } }) => {
+const page = async ({
+  params,
+}: {
+  params: { propertyId: string };
+}) => {
   const { propertyId } = params;
-  const { userId } = await fetchUser();
+
+  const reqHeaders = headers()
+  const user = await fetchUserServer(reqHeaders);
+
+  if (!user) {
+    return redirect("/sign-in");
+  }
 
   const property = await db.property.findUnique({
     where: {
-      id: propertyId
-    }
+      id: propertyId,
+    },
   });
 
   if (!property) {
-    return <div>No property found</div>
-  };
+    return <div>No property found</div>;
+  }
 
-  if (userId !== property.OwnerId) {
-    return <div>You are not the owner of this property</div>
-  };
+  if (user.userId !== property.OwnerId) {
+    return <div>You are not the owner of this property</div>;
+  }
 
-  return ( 
+  return (
     <div className="md:mx-28">
-      {propertyId}
+      <PropertyIdPage />
     </div>
-   );
-}
+  );
+};
 
-export default PropertyIdPage;
+export default page;

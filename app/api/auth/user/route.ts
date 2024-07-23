@@ -10,8 +10,6 @@ export async function GET(req: Request) {
     const token = cookies.token;
     const tokenExpired = isTokenExpired(token)
 
-    console.log("token from /api/auth/user", token)
-
     if (!token) {
       return NextResponse.json(
       {

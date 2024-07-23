@@ -1,5 +1,4 @@
 import axios from "axios"
-import { NextRequest } from "next/server";
 
 export const fetchUser = async () => {
   try {
@@ -12,19 +11,26 @@ export const fetchUser = async () => {
   }
 }
 
-export const fetchUserServer = async (req: NextRequest) => {
+export const fetchUserServer = async (reqHeaders: Headers) => {
   try {
-    const cookies = req.headers.get("cookie") || ""
+    const cookies = reqHeaders.get("cookie") || "";
+    console.log("test function:", cookies);
+
     const res = await fetch("http://localhost:3000/api/auth/user", {
       method: "GET",
       headers: {
-        "Cookie": cookies
-      }
+        "Cookie": cookies,
+      },
     });
 
-    const { userId, name, email, role } = await res.json()
+    if (!res.ok) {
+      throw new Error("Failed to fetch user data");
+    }
+
+    const { userId, name, email, role } = await res.json();
+    return { userId, email, name, role };
   } catch (error) {
     console.log("[ERR_FETCHUSER_SV]", error);
-    
+    return null;
   }
-}
+};

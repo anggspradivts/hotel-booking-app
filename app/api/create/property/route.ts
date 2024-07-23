@@ -19,8 +19,6 @@ export async function POST(
     const userData = await res.json();
     const { name, message } = userData;
 
-    console.log("logg", name);
-
     if (!name) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     };
@@ -35,7 +33,7 @@ export async function POST(
       }
     });
 
-    console.log("sp", typeof searchType)
+    console.log("sp", searchType)
 
     if(!searchType) {
       return NextResponse.json({ message: "Property type not found" }, { status: 404 })
@@ -48,7 +46,7 @@ export async function POST(
       }
     });
 
-    const response = NextResponse.json({ message: "Success createing property", createProperty }, { status: 200 });
+    const response = NextResponse.json({ message: "Success creating property", createProperty }, { status: 200 });
     return response
   } catch (error) {
     console.log("[ERR_CREATE_PROPERTY]", error)
