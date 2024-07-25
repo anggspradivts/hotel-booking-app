@@ -31,7 +31,7 @@ const PartnerLandingPage = () => {
   };
 
   return (
-    <div className="px-28">
+    <div className="md:px-28">
       Be a partner
       {isPartner ? (
         <>

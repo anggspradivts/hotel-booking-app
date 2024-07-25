@@ -3,6 +3,7 @@
 import UserAvatar from "@/components/user-avatar";
 import axios from "axios";
 import clsx from "clsx";
+import { Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -52,6 +53,7 @@ const Navbar = () => {
               <div className="space-x-3">
                 {navRoute.map((route, index) => (
                   <button
+                    key={index}
                     className={clsx("px-2", "border border-white rounded-full")}
                   >
                     {route.name}
@@ -73,8 +75,11 @@ const Navbar = () => {
       </div>
       <div className="bg-white h-10 shadow-2xl md:px-28 flex items-center">
         <ul className="flex space-x-2 ">
-          <li className="hover:text-green-600">
-            <Link href="/">home {">"}</Link>
+          <li className="flex items-center hover:text-green-600">
+            <Link href="/">
+              <Home className="h-5 w-5" />{" "}
+            </Link>
+            {">"}
           </li>
           {fullUrl.map((url, index) => (
             <li key={index} className="hover:text-green-600">

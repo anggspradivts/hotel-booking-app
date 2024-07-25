@@ -27,8 +27,8 @@ export const fetchUserServer = async (reqHeaders: Headers) => {
       throw new Error("Failed to fetch user data");
     }
 
-    const { userId, name, email, role } = await res.json();
-    return { userId, email, name, role };
+    const { userId, name, email, role, message } = await res.json();
+    return { userId, email, name, role, message };
   } catch (error) {
     console.log("[ERR_FETCHUSER_SV]", error);
     return null;

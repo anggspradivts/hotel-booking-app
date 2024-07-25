@@ -52,7 +52,7 @@ const PropertyTypePage = () => {
   const handleCreateProperty = async (propertyType: string, userId: string) => {
     try {
       const data = { propertyType, userId }; //Incoming data is plain text, format it into object
-      const res = await axios.post("/api/create/property", data);
+      const res = await axios.post("/api/property/create", data);
       const createProperty = res.data.createProperty;
       router.push(`/partner/my-property/${createProperty.id}`);
       toast.success("Success creating property");
