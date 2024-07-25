@@ -8,14 +8,6 @@ export async function POST(
   req: Request
 ) {
   try {
-    // const cookies = req.headers.get("cookie") || "";
-    // const res = await fetch("http://localhost:3000/api/auth/user", {
-    //   method: "GET",
-    //   headers: {
-    //     "Cookie": cookies
-    //   }
-    // });
-
     const reqHeaders = headers();
     const user = await fetchUserServer(reqHeaders);
 
@@ -43,10 +35,16 @@ export async function POST(
       return NextResponse.json({ message: "Property type not found" }, { status: 404 })
     }
 
+    //Create two data, create property and create property location
     const createProperty = await db.property.create({
       data: {
         PropertyType: searchType.name,
         OwnerId: userId
+      }
+    });
+    const createPropertyLocation = await db.propertyLocation.create({
+      data: {
+        propertyId: createProperty.id
       }
     });
 

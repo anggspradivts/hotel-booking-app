@@ -27,13 +27,13 @@ export async function PATCH(
     //check if property exist
     if (!findProperty) {
       return NextResponse.json({ message: "Property not found" }, { status: 404 })
-    }
+    };
 
     //check if the loggedin user is the owner of property
     if (user.userId !== findProperty.OwnerId) {
       return NextResponse.json({ message: "You are not the owner of this property" }, { status: 401 })
-    }
-
+    };
+ 
     const updateproperty = await db.property.update({
       where: {
         id: findProperty.id

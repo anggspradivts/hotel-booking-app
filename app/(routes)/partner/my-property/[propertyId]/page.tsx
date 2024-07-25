@@ -25,6 +25,16 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
     return <div>No property found</div>;
   }
 
+  const findPropertyLocation = await db.propertyLocation.findUnique({
+    where: {
+      propertyId: property.id,
+    }
+  });
+
+  if (!findPropertyLocation) {
+    return //handle 
+  }
+
   if (user.userId !== property.OwnerId) {
     return <div>You are not the owner of this property</div>;
   }
@@ -38,7 +48,7 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
         </div>
         <div className="right-section">
           <PropertyNameForm property={property}/>
-          <PropertyLocationForm property={property}/>
+          <PropertyLocationForm property={property} propertyLocation={findPropertyLocation} />
           {/* type section */}
           {/* price section */}
         </div>

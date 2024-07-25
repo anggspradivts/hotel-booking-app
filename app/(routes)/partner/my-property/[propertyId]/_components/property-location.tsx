@@ -2,7 +2,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Property } from "@prisma/client";
+import { Property, PropertyLocation } from "@prisma/client";
 import clsx from "clsx";
 import { Dispatch, SetStateAction, useState } from "react";
 
@@ -26,16 +26,19 @@ interface Coordinates {
 
 interface PropertyLocationFormProps {
   property: Property;
+  propertyLocation: PropertyLocation;
 }
-const PropertyLocationForm = ({ property }: PropertyLocationFormProps) => {
+const PropertyLocationForm = ({ property, propertyLocation }: PropertyLocationFormProps) => {
   const [isEditting, setIsEditting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
 
   const router = useRouter();
+
+  //check if theres allready lat and lng on propertyLocation database
   const initialLocation = {
-    lat: -8.6743,
-    lng: 115.2041,
+    lat: propertyLocation.latitude || -8.6743,
+    lng: propertyLocation.longitude || 115.2041,
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -113,6 +116,7 @@ const PropertyLocationForm = ({ property }: PropertyLocationFormProps) => {
               initialLat={initialLocation.lat}
               initialLng={initialLocation.lng}
               setCoordinates={handleCoordinates}
+              propertyId={property.id}
             />
             <div className={clsx("mt-4", "text-sm text-slate-600")}>
               <p>Click the map to set the coordinates</p>

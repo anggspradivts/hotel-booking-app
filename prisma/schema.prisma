@@ -48,7 +48,7 @@ model BookedHistory {
 
 model Property {
   id          String  @id @default(uuid())
-  name        String  @default("property")
+  name        String  @default("My Property")
   description String?
   slug        String? @unique
   confirmed   Boolean @default(false)
@@ -56,24 +56,31 @@ model Property {
   OwnerId String
   ownerId User?  @relation(fields: [OwnerId], references: [id])
 
-  provinceId String?
-  province   Province? @relation(fields: [provinceId], references: [id])
-
   PropertyType String
   propertyType PropertyType? @relation(fields: [PropertyType], references: [name])
 
   Booked BookedHistory[]
+  LocationDetails PropertyLocation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Province {
+model PropertyLocation {
   id   String @id @default(uuid())
-  name String
-  slug String @unique
+  country String? @unique
+  state String?
+  city String?
+  village String?
+  town String?
+  road String?
+  postcode String?
 
-  Properties Property[]
+  latitude Decimal?
+  longitude Decimal?
+
+  propertyId String? @unique
+  property Property? @relation(fields: [propertyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

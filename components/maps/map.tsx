@@ -9,10 +9,11 @@ import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 import "leaflet-control-geocoder";
 import L from "leaflet";
 import icon from "./constants"
+import { Decimal } from "@prisma/client/runtime/library";
 
 interface LeafletMapViewProps {
-  lat: number,
-  lng: number
+  lat: number;
+  lng: number;
 }
 export const LeafletMapView = ({ lat, lng }: LeafletMapViewProps) => {
   return (
