@@ -1,7 +1,4 @@
 "use client";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Property, PropertyLocation } from "@prisma/client";
 import clsx from "clsx";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -10,14 +7,9 @@ import { Pencil, X } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { LeafletMapView } from "@/components/maps/map";
+import { LeafletMapTsx, LeafletMapView } from "@/components/maps/map";
 import { MapLeafletGeocoder } from "@/components/maps/map-with-js";
 import Link from "next/link";
-
-const formSchema = z.object({
-  name: z.string(),
-  id: z.string(),
-});
 
 interface Coordinates {
   lat: number;
@@ -28,7 +20,10 @@ interface PropertyLocationFormProps {
   property: Property;
   propertyLocation: PropertyLocation;
 }
-const PropertyLocationForm = ({ property, propertyLocation }: PropertyLocationFormProps) => {
+const PropertyLocationForm = ({
+  property,
+  propertyLocation,
+}: PropertyLocationFormProps) => {
   const [isEditting, setIsEditting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
@@ -39,32 +34,6 @@ const PropertyLocationForm = ({ property, propertyLocation }: PropertyLocationFo
   const initialLocation = {
     lat: propertyLocation.latitude || -8.6743,
     lng: propertyLocation.longitude || 115.2041,
-  };
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: property.name,
-      id: property.id,
-    },
-  });
-  const { handleSubmit, getValues, register } = form;
-  const { isSubmitting, isValid } = form.formState;
-
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    try {
-      setIsLoading(true);
-      const res = await axios.patch("/api/property/edit", data);
-      if (res.status === 200) {
-        toast.success("Property location updated successfully");
-        router.refresh();
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-      setIsEditting(false);
-    }
   };
 
   const handleCoordinates: Dispatch<SetStateAction<Coordinates | null>> = (
@@ -97,7 +66,6 @@ const PropertyLocationForm = ({ property, propertyLocation }: PropertyLocationFo
           {isEditting ? (
             <>
               <X className="h-4 w-4" />
-              <p>Cancel</p>
             </>
           ) : (
             <>
@@ -112,23 +80,27 @@ const PropertyLocationForm = ({ property, propertyLocation }: PropertyLocationFo
           <LeafletMapView lat={initialLocation.lat} lng={initialLocation.lng} />
         ) : (
           <>
-            <MapLeafletGeocoder
+            <LeafletMapTsx
               initialLat={initialLocation.lat}
               initialLng={initialLocation.lng}
               setCoordinates={handleCoordinates}
               propertyId={property.id}
             />
+            {/* <MapLeafletGeocoder
+              initialLat={initialLocation.lat}
+              initialLng={initialLocation.lng}
+              setCoordinates={handleCoordinates}
+              propertyId={property.id}
+            /> */}
             <div className={clsx("mt-4", "text-sm text-slate-600")}>
               <p>Click the map to set the coordinates</p>
               {coordinates && (
                 <div>
-                  <p>Selected Latitude: {coordinates.lat}</p>
-                  <p>Selected Longitude: {coordinates.lng}</p>
                   <Link
                     target="_blank"
                     href={`https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}`}
                   >
-                    <p className="hover:text-sky-500">Open in google map </p>
+                    <p className="text-sky-600 hover:text-sky-500">Open in google map </p>
                   </Link>
                 </div>
               )}

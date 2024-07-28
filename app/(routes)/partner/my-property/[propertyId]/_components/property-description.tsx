@@ -12,14 +12,16 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string(),
+  description: z.string(),
   id: z.string(),
 });
 
-interface PropertyNameFormProps {
+interface PropertyDescriptionFormProps {
   property: Property;
 }
-const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
+const PropertyDescriptionForm = ({
+  property,
+}: PropertyDescriptionFormProps) => {
   const [isEditting, setIsEditting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +30,7 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: property.name,
+      description: property.description || undefined,
       id: property.id,
     },
   });
@@ -40,7 +42,7 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
       setIsLoading(true);
       const res = await axios.patch("/api/property/edit", data);
       if (res.status === 200) {
-        toast.success("Property name updated successfully");
+        toast.success("Property description updated successfully");
         router.refresh();
       }
     } catch (error) {
@@ -62,7 +64,7 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
       )}
     >
       <div className="flex justify-between items-center ">
-        <h1 className="italic font-semibold">Property Name:</h1>
+        <h1 className="italic font-semibold">Property Description:</h1>
         <button
           onClick={() => setIsEditting((prev) => !prev)}
           className={clsx(
@@ -92,19 +94,22 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
               ""
             )}
           >
-            <p className="text-sm">{property.name}</p>
+            <p className="text-sm">
+              {property.description
+                ? property.description
+                : "No description provided for this property"}
+            </p>
           </div>
         ) : (
           <form
-            name="name"
+            name="description"
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-5"
           >
-            <input
-              {...register("name")}
-              type="text"
-              defaultValue={getValues("name")}
-              placeholder="your property name"
+            <textarea
+              {...register("description")}
+              defaultValue={getValues("description")}
+              placeholder="your property description"
               className={clsx(
                 "w-full px-3 py-2",
                 "border border-slate-300 rounded-lg"
@@ -126,4 +131,4 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
   );
 };
 
-export default PropertyNameForm;
+export default PropertyDescriptionForm;

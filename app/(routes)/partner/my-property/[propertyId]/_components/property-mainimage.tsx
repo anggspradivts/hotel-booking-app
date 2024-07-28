@@ -4,35 +4,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Property } from "@prisma/client";
 import clsx from "clsx";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
-import { Pencil, X } from "lucide-react";
+import { Image, Pencil, X } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string(),
+  imgUrl: z.string(),
   id: z.string(),
 });
 
-interface PropertyNameFormProps {
+interface PropertyMainImgFormProps {
   property: Property;
 }
-const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
+const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
   const [isEditting, setIsEditting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [fileState, setFileState] = useState<string | null>(null);
 
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: property.name,
+      imgUrl: property.name,
       id: property.id,
     },
   });
-  const { handleSubmit, getValues, register } = form;
+  const { handleSubmit, register } = form;
   const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -51,6 +52,23 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
     }
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const reader = new FileReader();
+      const selectedFile = files[0];
+      reader.onloadend = () => {
+        setFileState(reader.result as string);
+      };
+      const p = reader.readAsDataURL(selectedFile);
+      console.log(selectedFile)
+      console.log(p)
+      // setFileState(selectedFile);
+    }
+  };
+
+  console.log(fileState)
+
   return (
     <div
       className={clsx(
@@ -62,7 +80,7 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
       )}
     >
       <div className="flex justify-between items-center ">
-        <h1 className="italic font-semibold">Property Name:</h1>
+        <h1 className="italic font-semibold">Property Main Image</h1>
         <button
           onClick={() => setIsEditting((prev) => !prev)}
           className={clsx(
@@ -84,16 +102,29 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
         </button>
       </div>
       <div>
-        <div className="flex justify-between items-center"></div>
         {!isEditting ? (
-          <div
-            className={clsx(
-              "flex justify-between items-center w-full py-2",
-              ""
-            )}
-          >
-            <p className="text-sm">{property.name}</p>
-          </div>
+          property.imgUrl ? (
+            <div
+              className={clsx(
+                "flex justify-center items-center w-full py-2 rounded",
+                "h-[200px] w-auto",
+                "bg-slate-300"
+              )}
+            >
+              <img src="" alt="" />
+            </div>
+          ) : (
+            <div
+              className={clsx(
+                "flex flex-col justify-center items-center w-full py-2 rounded",
+                "h-[200px] w-full space-y-3",
+                "bg-slate-300"
+              )}
+            >
+              <Image className="h-6 w-6" />
+              <p className="text-sm">no image provided</p>
+            </div>
+          )
         ) : (
           <form
             name="name"
@@ -101,10 +132,9 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
             className="space-y-5"
           >
             <input
-              {...register("name")}
-              type="text"
-              defaultValue={getValues("name")}
-              placeholder="your property name"
+              {...register("imgUrl")}
+              type="file"
+              onChange={(e) => handleFileChange(e)}
               className={clsx(
                 "w-full px-3 py-2",
                 "border border-slate-300 rounded-lg"
@@ -126,4 +156,4 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
   );
 };
 
-export default PropertyNameForm;
+export default PropertyMainImgForm;

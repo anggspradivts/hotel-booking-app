@@ -1,15 +1,23 @@
 // Doesnt work yet because react-leaflet doesnt provide the type for typescript, but you can provide it by yourself
 "use client";
-
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
-import "leaflet-control-geocoder/dist/Control.Geocoder.js";
-import "leaflet-control-geocoder";
+import "leaflet-control-geocoder"
 import L from "leaflet";
-import icon from "./constants"
-import { Decimal } from "@prisma/client/runtime/library";
+import icon from "./constants";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+  useMap
+} from "react-leaflet";
 
 interface LeafletMapViewProps {
   lat: number;
@@ -34,76 +42,123 @@ export const LeafletMapView = ({ lat, lng }: LeafletMapViewProps) => {
 };
 
 
-// interface Coordinates {
-//   lat: number;
-//   lng: number;
-// }
-// interface LeafletMapProps {
-//   initialLat: number;
-//   initialLng: number;
-//   setCoordinates: Dispatch<SetStateAction<Coordinates | null>>;
-// }
-// const LocationMarker: React.FC<{ setCoordinates: Dispatch<SetStateAction<Coordinates | null>> }> = ({ setCoordinates }) => {
-//   const [position, setPosition] = useState<Coordinates | null>(null);
+//
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
+interface LeafletControlGeocoderProps {
+  propertyId: string;
+  setCoordinates: Dispatch<SetStateAction<Coordinates | null>>;
+}
+function LeafletControlGeocoder({ setCoordinates, propertyId }: LeafletControlGeocoderProps) {
+  const [position, setPosition] = useState<Coordinates | null>(null);
+  const map = useMap();
+  const router = useRouter();
 
-//   useMapEvents({
-//     click(e) {
-//       const { lat, lng } = e.latlng;
-//       const newPosition = { lat, lng };
-//       setPosition(newPosition);
-//       setCoordinates(newPosition);
-//     }
-//   });
+  interface handleMapClickProps {
+    lat: number;
+    lng: number
+  }
+  const handleMapClick = async ({ lat, lng }: handleMapClickProps) => {
+    try {
+      const res = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const { address } = res.data;
+      const { postcode, city, state, county, country } = address; //Limit the data that will be sent to the server
+      //Restructure the data that will be sent to the server to be updated
+      const data = {
+        latitude: lat,
+        longitude: lng,
+        propertyId,
+        postcode,
+        city,
+        state,
+        county,
+        country,
+      };
 
-//   return position === null ? null : (
-//     <Marker position={[position.lat, position.lng]}>
-//     </Marker>
-//   );
-// };
-// export const LeafletMap: React.FC<LeafletMapProps> = ({ initialLat, initialLng, setCoordinates }) => {
-//   const mapRef = useRef<L.Map | null>(null);
+      console.log(data)
+      
+      const editRes = await axios.patch("/api/property/edit-location", data);
+      if (editRes.status === 200) {
+        toast.success("Location updated successfully");
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Something went wrong")
+    }
+  };
 
-//   useEffect(() => {
-//     if (!mapRef.current) return;
+  useMapEvents({
+    click(e) {
+      const { lat, lng } = e.latlng;
 
-//     const map = mapRef.current;
+      handleMapClick({ lat, lng })
+      const newPosition = { lat, lng };
+      setPosition(newPosition);
+      setCoordinates(newPosition);
+    },
+  });
 
-//     const geocoder = L.Control.Geocoder.nominatim();
-//     const control = L.Control.geocoder({
-//       geocoder: geocoder,
-//       defaultMarkGeocode: false,
-//     }).addTo(map);
+  useEffect(() => {
+    let geocoder = L.Control.Geocoder.nominatim();
+    if (typeof URLSearchParams !== "undefined" && location.search) {
+      // parse /?geocoder=nominatim from URL
+      const params = new URLSearchParams(location.search);
+      const geocoderString = params.get("geocoder");
+      if (geocoderString && L.Control.Geocoder[geocoderString]) {
+        geocoder = L.Control.Geocoder[geocoderString]();
+      } else if (geocoderString) {
+        console.warn("Unsupported geocoder", geocoderString);
+      }
+    }
+    if (!map.hasLayer(L.Control.Geocoder)) {
+      L.Control.geocoder({
+        query: "",
+        placeholder: "Search here...",
+        defaultMarkGeocode: false,
+        geocoder,
+      })
+        .on("markgeocode", function (e) {
+          const latlng = e.geocode.center;
+          L.marker(latlng, { icon })
+            .addTo(map)
+            .bindPopup(e.geocode.name)
+            .openPopup();
+          map.fitBounds(e.geocode.bbox);
+        })
+        .addTo(map);
+    }
+  }, []);
 
-//     control.on("markgeocode", (e: any) => {
-//       const latLng = e.geocode.center;
-//       setCoordinates({ lat: latLng.lat, lng: latLng.lng });
-//       map.setView(latLng, 13);
-//       L.marker(latLng).addTo(map).bindPopup(e.geocode.name).openPopup();
-//     });
+  return position === null ? null : (
+    <Marker icon={icon} position={[position.lat, position.lng]}></Marker>
+  );
+}
 
-//     map.on("click", (e: L.LeafletMouseEvent) => {
-//       const { lat, lng } = e.latlng;
-//       setCoordinates({ lat, lng });
-//       L.marker([lat, lng]).addTo(map);
-//     });
-
-//     return () => {
-//       map.off();
-//       map.remove();
-//     };
-//   }, [setCoordinates]);
-
-//   return (
-//     <MapContainer
-//       center={[initialLat, initialLng]}
-//       zoom={13}
-//       // whenReady={mapRef.current = mapRef.current || mapInstance;}
-//       style={{ height: "400px", width: "100%" }}
-//     >
-//       <TileLayer
-//         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-//       />
-//     </MapContainer>
-//   );
-// };
+interface LeafletMapTsxProps {
+  initialLat: number;
+  initialLng: number;
+  setCoordinates: Dispatch<SetStateAction<Coordinates | null>>;
+  propertyId: string;
+}
+export const LeafletMapTsx = ({
+  initialLat,
+  initialLng,
+  setCoordinates,
+  propertyId
+}: LeafletMapTsxProps) => {
+  return (
+    <MapContainer
+      center={[initialLat, initialLng]}
+      zoom={13}
+      style={{ height: "300px" }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <LeafletControlGeocoder setCoordinates={setCoordinates} propertyId={propertyId} />
+    </MapContainer>
+  );
+};

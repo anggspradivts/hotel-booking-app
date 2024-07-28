@@ -26,7 +26,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 enum Role {
   USER
   ADMIN
@@ -50,6 +49,7 @@ model Property {
   id          String  @id @default(uuid())
   name        String  @default("My Property")
   description String?
+  imgUrl      String?
   slug        String? @unique
   confirmed   Boolean @default(false)
 
@@ -59,31 +59,84 @@ model Property {
   PropertyType String
   propertyType PropertyType? @relation(fields: [PropertyType], references: [name])
 
-  Booked BookedHistory[]
+  Booked          BookedHistory[]
   LocationDetails PropertyLocation[]
+  RoomOption PropertyRoomOption[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model PropertyLocation {
-  id   String @id @default(uuid())
-  country String? @unique
-  state String?
-  city String?
-  village String?
-  town String?
-  road String?
+  id       String  @id @default(uuid())
+  country  String? 
+  state    String?
+  city     String?
+  county  String?
   postcode String?
 
-  latitude Decimal?
+  latitude  Decimal?
   longitude Decimal?
 
-  propertyId String? @unique
-  property Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?   @unique
+  property   Property? @relation(fields: [propertyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PropertyRoomOption {
+  id String @id @default(uuid())
+
+  propertyId String?
+  property Property? @relation(fields: [propertyId], references: [id])
+
+  RoomTypes RoomTypes[]
+  GuestsTypes GuestsType[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoomTypes {
+  id String @id @default(uuid())
+  RoomTypes String?
+
+  PropertyRoomOptId String?
+  properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id])
+
+  BedTypes BedTypes[]
+  RoomFacilities RoomTypesFacilities[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model BedTypes {
+  id String @id @default(uuid())
+  type String? 
+
+  RoomTypesId String?
+  room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model RoomTypesFacilities {
+  id String @unique @default(uuid())
+  facility String?
+
+  RoomTypesId String?
+  room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GuestsType {
+  id String @id @default(uuid())
+
+  PropertyRoomOptId String?
+  properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id])
 }
 
 model PropertyType {
