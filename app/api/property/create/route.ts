@@ -15,13 +15,6 @@ export async function POST(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    // const userData = await res.json();
-    const { name, message } = user;
-
-    if (!name) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    };
-
     const data = await req.json();
     const { propertyType, userId } = data
 

@@ -6,6 +6,7 @@ import PropertyNameForm from "./_components/property-name";
 import PropertyLocationForm from "./_components/property-location";
 import PropertyDescriptionForm from "./_components/property-description";
 import PropertyMainImgForm from "./_components/property-mainimage";
+import PropertyDetailForm from "./_components/property_detail";
 
 const page = async ({ params }: { params: { propertyId: string } }) => {
   const { propertyId } = params;
@@ -21,6 +22,18 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
     where: {
       id: propertyId,
     },
+    include: {
+      RoomOption: {
+        include: {
+          RoomTypes: {
+            include: {
+              BedTypes: true, 
+              RoomFacilities: true
+            }
+          }
+        }
+      }
+    }
   });
 
   if (!property) {
@@ -44,18 +57,20 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
   return (
     <div className="mx-10 md:mx-28">
       <div className="grid md:grid-cols-2 md:gap-5">
-        <div className="right-section">
+        <div className="left-section">
           <PropertyNameForm property={property}/>
           <PropertyLocationForm property={property} propertyLocation={findPropertyLocation} />
+          <PropertyDetailForm property={property} />
           {/* type section */}
           {/* price section */}
         </div>
-        <div className="left-section">
+        <div className="right-section">
           <PropertyMainImgForm property={property } />
           <PropertyDescriptionForm property={property} />
+          
         </div>
       </div>
-      <div>{/* feature section */}</div>
+      <div></div>
       <div>{/* group of images section */}</div>
     </div>
   );

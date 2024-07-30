@@ -18,7 +18,7 @@ model User {
   name     String
   email    String @unique
   password String
-  role     Role   @default(USER)
+  role     Role   @default(USER) 
 
   BookedHistory BookedHistory[]
   Properties    Property[]
@@ -88,7 +88,7 @@ model PropertyLocation {
 model PropertyRoomOption {
   id String @id @default(uuid())
 
-  propertyId String?
+  propertyId String
   property Property? @relation(fields: [propertyId], references: [id])
 
   RoomTypes RoomTypes[]
@@ -100,9 +100,9 @@ model PropertyRoomOption {
 
 model RoomTypes {
   id String @id @default(uuid())
-  RoomTypes String?
+  name String?
 
-  PropertyRoomOptId String?
+  PropertyRoomOptId String
   properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id])
 
   BedTypes BedTypes[]
@@ -113,9 +113,9 @@ model RoomTypes {
 }
 model BedTypes {
   id String @id @default(uuid())
-  type String? 
+  name String? 
 
-  RoomTypesId String?
+  RoomTypesId String
   room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id])
 
   createdAt DateTime @default(now())
@@ -123,9 +123,9 @@ model BedTypes {
 }
 model RoomTypesFacilities {
   id String @unique @default(uuid())
-  facility String?
+  name String?
 
-  RoomTypesId String?
+  RoomTypesId String
   room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id])
 
   createdAt DateTime @default(now())

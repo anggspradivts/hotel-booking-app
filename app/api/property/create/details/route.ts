@@ -2,28 +2,25 @@ import { db } from "@/lib/db";
 import { fetchUserServer } from "@/utils/user";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { object } from "zod";
 
-export async function PATCH(
-  req: Request
-) {
+export async function POST(req: Request) {
   try {
     const reqHeaders = headers();
     const user = await fetchUserServer(reqHeaders);
-    if (!user) {
+
+    if(!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
 
-    //Incoming data from client
     const data = await req.json();
-    const { name, id } = data;
+    const { roomTypesName, bedTypesName, roomTypesFacilities, id } = data
 
     const findProperty = await db.property.findUnique({
       where: {
         id: id
       }
     });
-
+    
     //check if property exist
     if (!findProperty) {
       return NextResponse.json({ message: "Property not found" }, { status: 404 })
@@ -33,18 +30,38 @@ export async function PATCH(
     if (user.userId !== findProperty.OwnerId) {
       return NextResponse.json({ message: "You are not the owner of this property" }, { status: 401 })
     };
- 
-    const updateproperty = await db.property.update({
-      where: {
-        id: findProperty.id
-      },
-      data: data
+    
+    const createRoomOption = await db.propertyRoomOption.create({
+      data: {
+        propertyId: findProperty.id
+      }
     });
 
-    const response = NextResponse.json({ message: "Success updating property", updateproperty }, { status: 200 });
+    const createRoomTypes = await db.roomTypes.create({
+      data: {
+        name: roomTypesName,
+        PropertyRoomOptId: createRoomOption.id
+      }
+    });
+
+    const createBedTypes = await db.bedTypes.create({
+      data: {
+        name: bedTypesName,
+        RoomTypesId: createRoomTypes.id
+      }
+    });
+
+    const createRoomFacilities = await db.roomTypesFacilities.create({
+      data: {
+        name: roomTypesFacilities,
+        RoomTypesId: createRoomTypes.id
+      }
+    });
+
+    const response = NextResponse.json({ message: "Success create property room details!" }, { status: 200 });
     return response;
   } catch (error) {
-    console.log("[ERR_EDIT_PROPERTY]", error);
+    console.log("[ERR_CREATE_DETAILS]", error);
     throw new Error("Internal server error")
   }
 }
