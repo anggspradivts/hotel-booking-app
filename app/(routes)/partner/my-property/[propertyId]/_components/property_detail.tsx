@@ -41,7 +41,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
   const [isAdding, setIsAdding] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [facility, setFacility] = useState([]);
-  const [isShow, setIsShow] = useState("");
+  const [isShow, setIsShow] = useState<string | null>(null);
 
   const bedTypes = ["Extra large double bed", "Double single bed"];
 
@@ -60,9 +60,11 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
   const { isSubmitting, isValid } = form.formState;
 
   //Find room types
-  const findRoomOption = property.RoomOption.find(
+  const findRoomOption = property.RoomOption.filter(
     (opt) => opt.propertyId === property.id
   );
+
+  console.log("testt", findRoomOption);
 
   const onSubmit = async (
     data: z.infer<typeof formSchema>,
@@ -76,6 +78,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
         res = await axios.post("/api/property/create/details", data);
         if (res.status === 200) {
           toast.success("Property added successfully");
+          router.refresh();
         }
       } else {
         //otherwise it is editing
@@ -97,7 +100,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
   return (
     <div className="border border-slate-300 rounded-lg">
       <div className="header p-3 flex justify-between items-center">
-        <h1 className="text-lg font-semibold italic">Rooms Details</h1>
+        <h1 className="text-md font-semibold italic">Rooms Details</h1>
         {isEditting || isAdding ? (
           <button
             onClick={() => {
@@ -132,39 +135,39 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
         )}
       </div>
       <div className="room-container"></div>
-      <div className="container p-3">
+      <div className="container p-3 space-y-2">
         {!isAdding ? ( //is not editing
           findRoomOption ? (
-            findRoomOption.RoomTypes.map((roomType) => (
+            findRoomOption.map((roomOpt) => (
               <>
                 <div
-                  onClick={() => setIsShow(roomType.id)}
-                  key={roomType.id}
+                  onClick={() => setIsShow(isShow === roomOpt.id? null : roomOpt.id)}
+                  key={roomOpt.id}
                   className={clsx(
-                    "bg-slate-300",
+                    "bg-slate-200",
                     "p-2 rounded-md flex items-center justify-between"
                   )}
                 >
-                  <h2 className="">{roomType.name}</h2>
+                  <h2 className="">{roomOpt.RoomTypes.map((t) => t.name)}</h2>
                 </div>
-                {isShow? (
-                  isShow === roomType.id? null : (
+                {isShow ? (
+                  isShow === roomOpt.id && (
                     <div>
                       <div>
                         room type:{" "}
-                        {
-                          roomType.BedTypes.find(
-                            (bed) => bed.RoomTypesId === roomType.id
-                          )?.name
-                        }
+                        {roomOpt.RoomTypes.map(
+                          (roomType) => roomType.BedTypes
+                        )
+                          .flat()
+                          .map((bed) => bed.name)}
                       </div>
                       <div>
                         Facilities:{" "}
-                        {
-                          roomType.RoomFacilities.find(
-                            (facility) => facility.RoomTypesId === roomType.id
-                          )?.name
-                        }
+                        {roomOpt.RoomTypes.map(
+                          (facility) => facility.RoomFacilities
+                        )
+                          .flat()
+                          .map((facility) => facility.name)}
                       </div>
                     </div>
                   )
