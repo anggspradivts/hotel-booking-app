@@ -68,7 +68,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
 
   const onSubmit = async (
     data: z.infer<typeof formSchema>,
-    isAdding: boolean
+    actionType: isAdding | isEditting
   ) => {
     try {
       setIsLoading(true);
@@ -110,6 +110,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
             className="flex jutify-between items-center space-x-2 px-2 py-2 shadow rounded-lg"
           >
             <X className="h-4 w-4" />
+            {isEditting ? "Cancel edit" : "Cancel add"}
           </button>
         ) : (
           <div className="flex space-x-2">
@@ -136,12 +137,14 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
       </div>
       <div className="room-container"></div>
       <div className="container p-3 space-y-2">
-        {!isAdding ? ( //is not editing
+        {!isAdding && !isEditting ? ( //is not editing
           findRoomOption ? (
             findRoomOption.map((roomOpt) => (
               <>
                 <div
-                  onClick={() => setIsShow(isShow === roomOpt.id? null : roomOpt.id)}
+                  onClick={() =>
+                    setIsShow(isShow === roomOpt.id ? null : roomOpt.id)
+                  }
                   key={roomOpt.id}
                   className={clsx(
                     "bg-slate-200",
@@ -150,28 +153,28 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                 >
                   <h2 className="">{roomOpt.RoomTypes.map((t) => t.name)}</h2>
                 </div>
-                {isShow ? (
-                  isShow === roomOpt.id && (
-                    <div>
+                {isShow
+                  ? isShow === roomOpt.id && (
                       <div>
-                        room type:{" "}
-                        {roomOpt.RoomTypes.map(
-                          (roomType) => roomType.BedTypes
-                        )
-                          .flat()
-                          .map((bed) => bed.name)}
+                        <div>
+                          room type:{" "}
+                          {roomOpt.RoomTypes.map(
+                            (roomType) => roomType.BedTypes
+                          )
+                            .flat()
+                            .map((bed) => bed.name)}
+                        </div>
+                        <div>
+                          Facilities:{" "}
+                          {roomOpt.RoomTypes.map(
+                            (facility) => facility.RoomFacilities
+                          )
+                            .flat()
+                            .map((facility) => facility.name)}
+                        </div>
                       </div>
-                      <div>
-                        Facilities:{" "}
-                        {roomOpt.RoomTypes.map(
-                          (facility) => facility.RoomFacilities
-                        )
-                          .flat()
-                          .map((facility) => facility.name)}
-                      </div>
-                    </div>
-                  )
-                ) : null}
+                    )
+                  : null}
               </>
             ))
           ) : (
@@ -180,68 +183,170 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
             </div>
           )
         ) : (
-          //is editing
-          <div className="form-container mt-4">
-            <form
-              {...form}
-              className="space-y-4"
-              onSubmit={handleSubmit((data) => onSubmit(data, isAdding))}
-            >
-              <div className="space-y-1">
-                <p className="text-sm font-bold">Room Type Name:</p>
-                <input
-                  {...register("roomTypesName")}
-                  id="type-name"
-                  className={clsx(
-                    "p-2 rounded text-sm w-full ",
-                    "border border-slate-200 focus:border-slate-300 focus:outline-none"
-                  )}
-                  type="text"
-                  placeholder="e.g, deluxe room or primary room"
-                />
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-bold">Room Type Beds:</p>
-                <div className="p-2  space-x-2 rounded text-sm w-full">
-                  {bedTypes.map((bed) => (
-                    <>
-                      <input
-                        {...register("bedTypesName")}
-                        id="type-beds"
-                        className=""
-                        type="radio"
-                        value={bed}
-                      />
-                      <label htmlFor="type-beds">{bed}</label>
-                    </>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-bold">Room Facilities:</p>
-                <div className="flex relative">
+          isAdding && (
+            <div className="form-container mt-4">
+              <form
+                {...form}
+                className="space-y-4"
+                onSubmit={handleSubmit((data) => onSubmit(data, isAdding))}
+              >
+                <div className="space-y-1">
+                  <p className="text-sm font-bold">Room Type Name:</p>
                   <input
-                    {...register("roomTypesFacilities")}
-                    id="facilities"
+                    {...register("roomTypesName")}
+                    id="type-name"
                     className={clsx(
-                      "p-2 text-sm w-full ",
-                      "border-b border-slate-200 focus:border-slate-300 focus:outline-none"
+                      "p-2 rounded text-sm w-full ",
+                      "border border-slate-200 focus:border-slate-300 focus:outline-none"
                     )}
                     type="text"
-                    placeholder="e.g, air conditioner, tv, etc."
+                    placeholder="e.g, deluxe room or primary room"
                   />
                 </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold">Room Type Beds:</p>
+                  <div className="p-2  space-x-2 rounded text-sm w-full">
+                    {bedTypes.map((bed) => (
+                      <>
+                        <input
+                          {...register("bedTypesName")}
+                          id="type-beds"
+                          className=""
+                          type="radio"
+                          value={bed}
+                        />
+                        <label htmlFor="type-beds">{bed}</label>
+                      </>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold">Room Facilities:</p>
+                  <div className="flex relative">
+                    <input
+                      {...register("roomTypesFacilities")}
+                      id="facilities"
+                      className={clsx(
+                        "p-2 text-sm w-full ",
+                        "border-b border-slate-200 focus:border-slate-300 focus:outline-none"
+                      )}
+                      type="text"
+                      placeholder="e.g, air conditioner, tv, etc."
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-end">
+                  <button
+                    disabled={isSubmitting || !isValid}
+                    className="p-2 shadow-md rounded-lg"
+                    type="submit"
+                  >
+                    {isLoading ? "Saving..." : "Save"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )
+        )}
+        {isEditting && (
+          <div className="space-y-2">
+            {findRoomOption ? (
+              findRoomOption.map((roomOpt) => (
+                <>
+                  <div
+                    onClick={() =>
+                      setIsShow(isShow === roomOpt.id ? null : roomOpt.id)
+                    }
+                    key={roomOpt.id}
+                    className={clsx(
+                      "bg-slate-200",
+                      "p-2 rounded-md flex items-center justify-between"
+                    )}
+                  >
+                    <h2 className="">{roomOpt.RoomTypes.map((t) => t.name)}</h2>
+                  </div>
+                  {isShow
+                    ? isShow === roomOpt.id && (
+                        <div className="bg-slate-100 p-2">
+                          <form
+                            {...form}
+                            onSubmit={handleSubmit((data) =>
+                              onSubmit(data, isEditting)
+                            )}
+                            className="space-y-2"
+                          >
+                            <div className="edit-room-name flex flex-col">
+                              <span className="text-sm italic">
+                                current room type name:{" "}
+                                <span className="font-semibold">
+                                  {roomOpt.RoomTypes.map(
+                                    (roomType) => roomType.name
+                                  )}
+                                </span>
+                              </span>
+                              <input
+                                className={clsx(
+                                  "p-2 rounded text-sm w-full ",
+                                  "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                )}
+                                {...register("roomTypesName")}
+                                type="text"
+                                placeholder="Enter your new room types name"
+                              />
+                            </div>
+                            <div className="edit-room-typebed flex flex-col">
+                              <span className="text-sm italic">
+                                current room type bed:{" "}
+                                <span className="font-semibold">
+                                  {roomOpt.RoomTypes.map(
+                                    (roomType) => roomType.BedTypes
+                                  )
+                                    .flat()
+                                    .map((bed) => bed.name)}
+                                </span>
+                              </span>
+                              <input
+                                className={clsx(
+                                  "p-2 rounded text-sm w-full ",
+                                  "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                )}
+                                {...register("bedTypesName")}
+                                type="text"
+                                placeholder="Enter your new bed types"
+                              />
+                            </div>
+                            <div>
+                              <span className="text-sm italic">
+                                current room type facilities:{" "}
+                                <span className="font-semibold">
+                                  {roomOpt.RoomTypes.map(
+                                    (roomType) => roomType.RoomFacilities
+                                  )
+                                    .flat()
+                                    .map((facility) => facility.name)}
+                                </span>
+                              </span>
+                              <input
+                                className={clsx(
+                                  "p-2 rounded text-sm w-full ",
+                                  "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                )}
+                                {...register("roomTypesFacilities")}
+                                type="text"
+                                placeholder="Enter your new room types facilities"
+                              />
+                            </div>
+                          </form>
+                        </div>
+                      )
+                    : null}
+                </>
+              ))
+            ) : (
+              <div>
+                <h2 className="text-sm italic">Add Room Type</h2>
               </div>
-              <div className="flex items-center justify-end">
-                <button
-                  disabled={isSubmitting || !isValid}
-                  className="p-2 shadow-md rounded-lg"
-                  type="submit"
-                >
-                  {isLoading ? "Saving..." : "Save"}
-                </button>
-              </div>
-            </form>
+            )}
           </div>
         )}
       </div>
