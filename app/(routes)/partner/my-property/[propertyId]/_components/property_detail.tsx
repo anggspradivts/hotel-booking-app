@@ -12,7 +12,7 @@ import {
 import clsx from "clsx";
 import { useState } from "react";
 
-import { Pencil, PlusCircle, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Pencil, PlusCircle, X } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -20,10 +20,13 @@ import DataGrid from "react-data-grid";
 import "react-data-grid/lib/styles.css";
 
 const formSchema = z.object({
-  roomTypesName: z.string(),
-  bedTypesName: z.string(),
-  roomTypesFacilities: z.string(),
-  id: z.string(),
+  newRoomTypesName: z.string(),
+  roomTypesId: z.string(),
+  newBedTypesName: z.string(),
+  bedTypesId: z.string(),
+  newRoomTypeFacilities: z.string(),
+  roomFacilitiesId: z.string(),
+  propertyId: z.string(),
 });
 
 interface PropertyDetailFormProps {
@@ -50,10 +53,13 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      roomTypesName: "",
-      bedTypesName: "",
-      roomTypesFacilities: "",
-      id: property.id,
+      newRoomTypesName: "",
+      roomTypesId: "",
+      newBedTypesName: "",
+      bedTypesId: "",
+      newRoomTypeFacilities: "",
+      roomFacilitiesId: "",
+      propertyId: property.id,
     },
   });
   const { handleSubmit, register } = form;
@@ -64,36 +70,49 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
     (opt) => opt.propertyId === property.id
   );
 
-  console.log("testt", findRoomOption);
-
-  const onSubmit = async (
-    data: z.infer<typeof formSchema>,
-    actionType: isAdding | isEditting
-  ) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
       let res;
+
       if (isAdding) {
-        //check if is adding
+        //check if it is add details state
         res = await axios.post("/api/property/create/details", data);
         if (res.status === 200) {
           toast.success("Property added successfully");
           router.refresh();
         }
-      } else {
-        //otherwise it is editing
-        res = await axios.patch("/api/property/edit/details", data);
+      } else if (isEditting) {
+        //check if it is edit details state
+        const editData = { ...data, roomOptId: isShow };
+        console.log("editt", editData);
+        res = await axios.patch("/api/property/edit/details", editData);
         if (res.status === 200) {
           toast.success("Property updated successfully");
         }
+      } else {
+        console.log("type of action is not defined");
+        return null;
       }
-      const resData = res.data;
       console.log(data);
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Something went wrong");
+      if (error && error.response) {
+        console.log(error.response.data.message);
+      }
     } finally {
       setIsLoading(false);
-      // setIsEditting(false);
+      setIsEditting(false);
+    }
+  };
+
+  const handleDelete = async (propertyId: string, roomOptId: string) => {
+    try {
+      console.log(propertyId);
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -152,6 +171,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                   )}
                 >
                   <h2 className="">{roomOpt.RoomTypes.map((t) => t.name)}</h2>
+                  {isShow === roomOpt.id ? <ChevronDown /> : <ChevronRight />}
                 </div>
                 {isShow
                   ? isShow === roomOpt.id && (
@@ -183,17 +203,17 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
             </div>
           )
         ) : (
-          isAdding && (
+          isAdding && ( //Add rooms details state
             <div className="form-container mt-4">
               <form
                 {...form}
                 className="space-y-4"
-                onSubmit={handleSubmit((data) => onSubmit(data, isAdding))}
+                onSubmit={handleSubmit((data) => onSubmit(data))}
               >
                 <div className="space-y-1">
                   <p className="text-sm font-bold">Room Type Name:</p>
                   <input
-                    {...register("roomTypesName")}
+                    {...register("newRoomTypesName")}
                     id="type-name"
                     className={clsx(
                       "p-2 rounded text-sm w-full ",
@@ -209,7 +229,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                     {bedTypes.map((bed) => (
                       <>
                         <input
-                          {...register("bedTypesName")}
+                          {...register("newBedTypesName")}
                           id="type-beds"
                           className=""
                           type="radio"
@@ -224,7 +244,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                   <p className="text-sm font-bold">Room Facilities:</p>
                   <div className="flex relative">
                     <input
-                      {...register("roomTypesFacilities")}
+                      {...register("newRoomTypeFacilities")}
                       id="facilities"
                       className={clsx(
                         "p-2 text-sm w-full ",
@@ -248,6 +268,8 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
             </div>
           )
         )}
+
+        {/* edit property rooms details state */}
         {isEditting && (
           <div className="space-y-2">
             {findRoomOption ? (
@@ -264,77 +286,114 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                     )}
                   >
                     <h2 className="">{roomOpt.RoomTypes.map((t) => t.name)}</h2>
+                    {isShow === roomOpt.id ? <ChevronDown /> : <ChevronRight />}
                   </div>
                   {isShow
                     ? isShow === roomOpt.id && (
                         <div className="bg-slate-100 p-2">
                           <form
                             {...form}
-                            onSubmit={handleSubmit((data) =>
-                              onSubmit(data, isEditting)
-                            )}
+                            onSubmit={handleSubmit((data) => onSubmit(data))}
                             className="space-y-2"
                           >
                             <div className="edit-room-name flex flex-col">
-                              <span className="text-sm italic">
-                                current room type name:{" "}
-                                <span className="font-semibold">
-                                  {roomOpt.RoomTypes.map(
-                                    (roomType) => roomType.name
-                                  )}
-                                </span>
-                              </span>
-                              <input
-                                className={clsx(
-                                  "p-2 rounded text-sm w-full ",
-                                  "border border-slate-200 focus:border-slate-300 focus:outline-none"
-                                )}
-                                {...register("roomTypesName")}
-                                type="text"
-                                placeholder="Enter your new room types name"
-                              />
+                              {roomOpt.RoomTypes.map((roomType) => (
+                                <>
+                                  <span className="text-sm italic">
+                                    current room type name:{" "}
+                                    <span className="font-semibold">
+                                      {roomType.name}
+                                    </span>
+                                  </span>
+                                  <input
+                                    className={clsx(
+                                      "p-2 rounded text-sm w-full ",
+                                      "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                    )}
+                                    {...register("newRoomTypesName")}
+                                    type="text"
+                                    placeholder="Enter your new room types name"
+                                    onChange={() =>
+                                      form.setValue("roomTypesId", roomType.id)
+                                    } //manually set the value
+                                    data-room-type-id={roomType.id}
+                                  />
+                                </>
+                              ))}
                             </div>
                             <div className="edit-room-typebed flex flex-col">
-                              <span className="text-sm italic">
-                                current room type bed:{" "}
-                                <span className="font-semibold">
-                                  {roomOpt.RoomTypes.map(
-                                    (roomType) => roomType.BedTypes
-                                  )
-                                    .flat()
-                                    .map((bed) => bed.name)}
-                                </span>
-                              </span>
-                              <input
-                                className={clsx(
-                                  "p-2 rounded text-sm w-full ",
-                                  "border border-slate-200 focus:border-slate-300 focus:outline-none"
-                                )}
-                                {...register("bedTypesName")}
-                                type="text"
-                                placeholder="Enter your new bed types"
-                              />
+                              {roomOpt.RoomTypes.map(
+                                (roomType) => roomType.BedTypes
+                              )
+                                .flat()
+                                .map((bed) => (
+                                  <>
+                                    <span className="text-sm italic">
+                                      current room type bed:{" "}
+                                      <span className="font-semibold">
+                                        {bed.name}
+                                      </span>
+                                    </span>
+                                    <input
+                                      className={clsx(
+                                        "p-2 rounded text-sm w-full ",
+                                        "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                      )}
+                                      {...register("newBedTypesName")}
+                                      type="text"
+                                      placeholder="Enter your new bed types"
+                                      onChange={() => {
+                                        form.setValue("bedTypesId", bed.id);
+                                      }}//manually set the value
+                                    />
+                                  </>
+                                ))}
                             </div>
                             <div>
-                              <span className="text-sm italic">
-                                current room type facilities:{" "}
-                                <span className="font-semibold">
-                                  {roomOpt.RoomTypes.map(
-                                    (roomType) => roomType.RoomFacilities
-                                  )
-                                    .flat()
-                                    .map((facility) => facility.name)}
-                                </span>
-                              </span>
-                              <input
-                                className={clsx(
-                                  "p-2 rounded text-sm w-full ",
-                                  "border border-slate-200 focus:border-slate-300 focus:outline-none"
-                                )}
-                                {...register("roomTypesFacilities")}
-                                type="text"
-                                placeholder="Enter your new room types facilities"
-                              />
+                              {roomOpt.RoomTypes.map(
+                                (roomType) => roomType.RoomFacilities
+                              )
+                                .flat()
+                                .map((facility) => (
+                                  <>
+                                    <span className="text-sm italic">
+                                      current room type facilities:{" "}
+                                      <span className="font-semibold">
+                                        {facility.name}
+                                      </span>
+                                    </span>
+                                    <input
+                                      className={clsx(
+                                        "p-2 rounded text-sm w-full ",
+                                        "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                      )}
+                                      {...register("newRoomTypeFacilities")}
+                                      type="text"
+                                      placeholder="Enter your new room types facilities"
+                                      onChange={() => form.setValue("roomFacilitiesId", facility.id)}//manually set the value
+                                    />
+                                  </>
+                                ))}
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <button
+                                onClick={() =>
+                                  handleDelete(property.id, roomOpt.id)
+                                }
+                                className="p-2 shadow-md rounded-lg bg-red-600 text-white"
+                                type="submit"
+                              >
+                                {isLoading
+                                  ? "Deleting..."
+                                  : "Delete this room details"}
+                              </button>
+                              <button
+                                disabled={isSubmitting || !isValid}
+                                className="p-2 shadow-md rounded-lg"
+                                type="submit"
+                              >
+                                {isLoading ? "Saving..." : "Save"}
+                              </button>
                             </div>
                           </form>
                         </div>

@@ -13,11 +13,23 @@ export async function PATCH(req: Request) {
     }
 
     const data = await req.json();
-    const { roomTypesName, bedTypesName, roomTypesFacilities, id } = data
+    console.log(data)
+    const { 
+      newRoomTypesName,
+      roomTypesId,
+      newBedTypesName,
+      bedTypesId,
+      newRoomTypeFacilities,
+      roomFaclitiesId,
+      propertyId, 
+      roomOptId 
+    } = data;
+    console.log(propertyId)
+
 
     const findProperty = await db.property.findUnique({
       where: {
-        id: id
+        id: propertyId
       }
     });
     
@@ -30,33 +42,46 @@ export async function PATCH(req: Request) {
     if (user.userId !== findProperty.OwnerId) {
       return NextResponse.json({ message: "You are not the owner of this property" }, { status: 401 })
     };
+
+    const findRoomOption = await db.propertyRoomOption.findUnique({
+      where: {
+        id: roomOptId
+      }
+    })
+    if(!findRoomOption) return NextResponse.json({ message: "Room option not found" }, { status: 404 })
     
-    const createRoomOption = await db.propertyRoomOption.create({
-      data: {
-        propertyId: findProperty.id
-      }
-    });
+    if (newRoomTypesName) {
+      await db.roomTypes.update({
+        where: {
+          id: roomTypesId
+        },
+        data: {
+          name: newRoomTypesName,
+        }
+      });
+    }
 
-    const createRoomTypes = await db.roomTypes.create({
+    if (newBedTypesName) await db.bedTypes.update({
+      where: {
+        id: bedTypesId
+      },
       data: {
-        name: roomTypesName,
-        PropertyRoomOptId: createRoomOption.id
+        name: newBedTypesName
       }
-    });
+    })
 
-    const createBedTypes = await db.bedTypes.create({
-      data: {
-        name: bedTypesName,
-        RoomTypesId: createRoomTypes.id
-      }
-    });
-
-    const createRoomFacilities = await db.roomTypesFacilities.create({
-      data: {
-        name: roomTypesFacilities,
-        RoomTypesId: createRoomTypes.id
-      }
-    });
+    if (newRoomTypeFacilities) {
+      const t = await db.roomTypesFacilities.update({
+        where: {
+          // id: '5f7eb0d8-f5d7-4a11-a021-fd1250313ba0'
+          id: roomFaclitiesId
+        },
+        data: {
+          name: newRoomTypeFacilities
+        }
+      })
+      console.log("testt", t)
+    }
 
     const response = NextResponse.json({ message: "Success create property room details!" }, { status: 200 });
     return response;
