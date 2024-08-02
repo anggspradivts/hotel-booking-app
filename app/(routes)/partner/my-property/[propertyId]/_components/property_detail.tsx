@@ -159,7 +159,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
       <div className="room-container"></div>
       <div className="container p-3 space-y-2">
         {!isAdding && !isEditting ? ( //is not editing
-          findRoomOption ? (
+          findRoomOption && findRoomOption.length > 0 ? (
             findRoomOption.map((roomOpt) => (
               <>
                 <div
@@ -211,7 +211,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
             ))
           ) : (
             <div>
-              <h2 className="text-sm italic">Add Room Type</h2>
+              <h2 className="text-sm italic">No room type provided, add room type</h2>
             </div>
           )
         ) : (

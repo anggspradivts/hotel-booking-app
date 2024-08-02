@@ -7,6 +7,7 @@ import PropertyLocationForm from "./_components/property-location";
 import PropertyDescriptionForm from "./_components/property-description";
 import PropertyMainImgForm from "./_components/property-mainimage";
 import PropertyDetailForm from "./_components/property_detail";
+import PropertyTypeForm from "./_components/property-type"
 
 const page = async ({ params }: { params: { propertyId: string } }) => {
   const { propertyId } = params;
@@ -54,6 +55,8 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
     return <div>You are not the owner of this property</div>;
   }
 
+  const propertyType = await db.propertyType.findMany()
+
   return (
     <div className="mx-10 md:mx-28">
       <div className="grid md:grid-cols-2 md:gap-5">
@@ -61,13 +64,12 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
           <PropertyNameForm property={property}/>
           <PropertyLocationForm property={property} propertyLocation={findPropertyLocation} />
           <PropertyDetailForm property={property} />
-          {/* type section */}
-          {/* price section */}
         </div>
         <div className="right-section">
-          <PropertyMainImgForm property={property } />
+          <PropertyMainImgForm property={property} />
           <PropertyDescriptionForm property={property} />
-          
+          <PropertyTypeForm property={property} propertyType={propertyType}/>
+          {/* price section */}
         </div>
       </div>
       <div></div>
