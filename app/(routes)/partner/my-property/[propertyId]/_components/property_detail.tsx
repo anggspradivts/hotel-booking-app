@@ -119,7 +119,9 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
   return (
     <div className="border border-slate-300 rounded-lg">
       <div className="header p-3 flex justify-between items-center">
-        <h1 className="text-md font-semibold italic">Rooms Details</h1>
+        <h1 className="text-md font-semibold italic">
+          {isEditting && "Edit"} Rooms Details
+        </h1>
         {isEditting || isAdding ? (
           <button
             onClick={() => {
@@ -175,22 +177,32 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                 </div>
                 {isShow
                   ? isShow === roomOpt.id && (
-                      <div>
+                      <div
+                        className={clsx("bg-slate-100", "p-2 rounded text-sm")}
+                      >
                         <div>
-                          room type:{" "}
                           {roomOpt.RoomTypes.map(
                             (roomType) => roomType.BedTypes
                           )
                             .flat()
-                            .map((bed) => bed.name)}
+                            .map((bed) => (
+                              <div className="">
+                                <span>Room type: </span>
+                                <span>{bed.name}</span>
+                              </div>
+                            ))}
                         </div>
                         <div>
-                          Facilities:{" "}
                           {roomOpt.RoomTypes.map(
                             (facility) => facility.RoomFacilities
                           )
                             .flat()
-                            .map((facility) => facility.name)}
+                            .map((facility) => (
+                              <div>
+                                <span>Available facilities: {""}</span>
+                                <span>{facility.name}</span>
+                              </div>
+                            ))}
                         </div>
                       </div>
                     )
@@ -344,7 +356,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                       placeholder="Enter your new bed types"
                                       onChange={() => {
                                         form.setValue("bedTypesId", bed.id);
-                                      }}//manually set the value
+                                      }} //manually set the value
                                     />
                                   </>
                                 ))}
@@ -370,7 +382,12 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                       {...register("newRoomTypeFacilities")}
                                       type="text"
                                       placeholder="Enter your new room types facilities"
-                                      onChange={() => form.setValue("roomFacilitiesId", facility.id)}//manually set the value
+                                      onChange={() =>
+                                        form.setValue(
+                                          "roomFacilitiesId",
+                                          facility.id
+                                        )
+                                      } //manually set the value
                                     />
                                   </>
                                 ))}

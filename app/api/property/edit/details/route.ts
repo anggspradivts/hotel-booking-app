@@ -13,19 +13,16 @@ export async function PATCH(req: Request) {
     }
 
     const data = await req.json();
-    console.log(data)
     const { 
       newRoomTypesName,
       roomTypesId,
       newBedTypesName,
       bedTypesId,
       newRoomTypeFacilities,
-      roomFaclitiesId,
+      roomFacilitiesId,
       propertyId, 
       roomOptId 
     } = data;
-    console.log(propertyId)
-
 
     const findProperty = await db.property.findUnique({
       where: {
@@ -61,26 +58,26 @@ export async function PATCH(req: Request) {
       });
     }
 
-    if (newBedTypesName) await db.bedTypes.update({
-      where: {
-        id: bedTypesId
-      },
-      data: {
-        name: newBedTypesName
-      }
-    })
+    if (newBedTypesName) {
+      await db.bedTypes.update({
+        where: {
+          id: bedTypesId
+        },
+        data: {
+          name: newBedTypesName
+        }
+      })
+    }
 
     if (newRoomTypeFacilities) {
-      const t = await db.roomTypesFacilities.update({
+      await db.roomTypesFacilities.update({
         where: {
-          // id: '5f7eb0d8-f5d7-4a11-a021-fd1250313ba0'
-          id: roomFaclitiesId
+          id: roomFacilitiesId
         },
         data: {
           name: newRoomTypeFacilities
         }
       })
-      console.log("testt", t)
     }
 
     const response = NextResponse.json({ message: "Success create property room details!" }, { status: 200 });
