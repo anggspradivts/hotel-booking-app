@@ -62,6 +62,7 @@ model Property {
   Booked          BookedHistory[]
   LocationDetails PropertyLocation[]
   RoomOption PropertyRoomOption[]
+  Images PropertyImages[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -147,4 +148,15 @@ model PropertyType {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PropertyImages {
+  id String @id @default(uuid())
+  url String?
+
+  propertyId String?
+  property_id Property? @relation(fields: [propertyId], references: [id])
+
+  createdAt DateTime @default(now())
+  editedAt DateTime @updatedAt
 }

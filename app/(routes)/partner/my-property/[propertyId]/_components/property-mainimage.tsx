@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
-  ImageUpload,
+  PropertyMainImageUpload,
   UploadedFile,
 } from "@/components/uploadthing/file-upload";
 
@@ -107,7 +107,7 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
             </div>
           )
         ) : (
-          <ImageUpload handleFileUpload={handleFileUpload} />
+          <PropertyMainImageUpload handleFileUpload={handleFileUpload} />
         )}
       </div>
     </div>

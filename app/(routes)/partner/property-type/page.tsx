@@ -12,6 +12,7 @@ const PropertyTypePage = () => {
     id: "",
     username: "",
   });
+  const [isShow, setIsShow] = useState<number | null>(null);
 
   const router = useRouter();
 
@@ -64,14 +65,17 @@ const PropertyTypePage = () => {
   return (
     <div className="md:px-28">
       <div className="flex justify-center items-center h-[200px]">
-        <h1 className="text-4xl font-semibold">
+        <h1 className="text-4xl font-semibold text-center">
           What type is your <span className="text-green-700">property</span>
         </h1>
       </div>
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-3 gap-5">
         {propertyType.map((prop) => (
-          <div key={prop.id} onClick={() => handleCreateProperty(prop.type, user.id)}>
-            <div className=" flex items-center justify-center h-[300px] group relative">
+          <div
+            key={prop.id}
+            onClick={() => handleCreateProperty(prop.type, user.id)}
+          >
+            <div className=" flex items-center justify-center h-[100px] md:h-[300px] group relative">
               <img
                 className={clsx(
                   "absolute inset-0 opacity-0 transition-opacity duration-500",
@@ -79,21 +83,25 @@ const PropertyTypePage = () => {
                   "h-full w-full object-cover"
                 )}
                 src="/test.jpg"
-                alt=""
+                alt="example-img"
+                onMouseEnter={() => setIsShow(prop.id)}
+                onMouseLeave={() => setIsShow(null)}
               />
               <div
                 className={clsx(
                   "flex justify-center items-center h-full w-full ",
                   "bg-slate-300 ",
-                  "text-3xl font-semibold"
+                  "md:text-3xl font-semibold"
                 )}
               >
                 {prop.name}
               </div>
             </div>
-            <div className="text-center mt-8">
-              <p className="text-xl font-semibold">{prop.name}</p>
-            </div>
+            {isShow === prop.id && (
+              <div className="text-center mt-8">
+                <p className="md:text-3xl font-semibold">{prop.name}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>

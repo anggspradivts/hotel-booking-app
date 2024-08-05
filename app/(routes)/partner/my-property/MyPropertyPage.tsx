@@ -8,24 +8,27 @@ interface MyPropertyPageProps {
   myProperty: (Property & { LocationDetails: PropertyLocation[] })[];
 }
 const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
-  // const findPropLocation = myProperty.find((prop) => prop.id === prop.propertyLocation);
-
-  console.log(myProperty);
   return (
     <>
       {myProperty.map((prop) => (
         <Link key={prop.id} href={`/partner/my-property/${prop.id}`}>
           <div
             className={clsx(
-              "h-[270px] w-[220px] rounded-lg overflow-hidden",
+              "h-[270px] w-[300px] rounded-lg overflow-hidden",
               "border border-slate-300 transition-all duration-300",
               "hover:shadow-md"
             )}
           >
             <div className="h-3/5 relative">
-              <p className="absolute right-2 top-1 text-xs px-1 rounded-full bg-slate-200">{prop.confirmed ? "verified" : "unverfied"}</p>
+              <p className="absolute right-2 top-2 text-xs font-medium px-1 rounded-full bg-slate-200">
+                {prop.confirmed ? "verified" : "unverified"}
+              </p>
               {prop.imgUrl ? (
-                <img className="w-full h-full object-cover" src="" alt="" />
+                <img
+                  className="w-full h-full object-cover"
+                  src={prop.imgUrl}
+                  alt="property-img"
+                />
               ) : (
                 <div className="bg-slate-300 w-full h-full flex justify-center items-center">
                   <Image className="h-6 w-6" />

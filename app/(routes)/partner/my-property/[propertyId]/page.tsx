@@ -8,6 +8,7 @@ import PropertyDescriptionForm from "./_components/property-description";
 import PropertyMainImgForm from "./_components/property-mainimage";
 import PropertyDetailForm from "./_components/property_detail";
 import PropertyTypeForm from "./_components/property-type"
+import PropertyImagesPage from "./_components/property-images";
 
 const page = async ({ params }: { params: { propertyId: string } }) => {
   const { propertyId } = params;
@@ -33,7 +34,8 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
             }
           }
         }
-      }
+      },
+      Images: true
     }
   });
 
@@ -58,7 +60,7 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
   const propertyType = await db.propertyType.findMany()
 
   return (
-    <div className="mx-10 md:mx-28">
+    <div className="mx-10 md:mx-28 space-y-5">
       <div className="grid md:grid-cols-2 md:gap-5">
         <div className="left-section">
           <PropertyNameForm property={property}/>
@@ -72,8 +74,9 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
           {/* price section */}
         </div>
       </div>
-      <div></div>
-      <div>{/* group of images section */}</div>
+      <div>
+        <PropertyImagesPage property={property} />
+      </div>
     </div>
   );
 };
