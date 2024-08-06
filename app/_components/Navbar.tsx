@@ -47,7 +47,7 @@ const Navbar = () => {
             <UserAvatar />
           </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="hidden md:flex items-center justify-between">
           {!pathname.startsWith("/partner") && (
             <>
               <div className="space-x-3">
@@ -73,7 +73,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <div className="bg-white h-10 shadow-2xl md:px-28 flex items-center">
+      <div className="bg-white h-10 border-b border-slate-300 md:px-28 flex items-center">
         <ul className="flex space-x-2 ">
           <li className="flex items-center hover:text-green-600">
             <Link href="/">

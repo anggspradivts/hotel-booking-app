@@ -79,7 +79,7 @@ function LeafletControlGeocoder({ setCoordinates, propertyId }: LeafletControlGe
 
       console.log(data)
       
-      const editRes = await axios.patch("/api/property/edit-location", data);
+      const editRes = await axios.patch("/api/partner/property/edit/location", data);
       if (editRes.status === 200) {
         toast.success("Location updated successfully");
         router.refresh();

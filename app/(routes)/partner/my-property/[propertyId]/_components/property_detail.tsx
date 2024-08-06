@@ -85,7 +85,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
       } else if (isEditting) {
         //check if it is edit details state
         const editData = { ...data, roomOptId: isShow };
-        res = await axios.patch("/api/property/edit/details", editData);
+        res = await axios.patch("/api/partner/property/edit/details", editData);
         if (res.status === 200) {
           toast.success("Property updated successfully");
           router.refresh();

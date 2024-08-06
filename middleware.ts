@@ -7,7 +7,9 @@ export async function middleware(req: NextRequest) {
   const token = cookies.token;
 
   if (!token) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    const url = req.nextUrl.clone();
+    url.pathname = '/sign-in'; // Path to your login page
+    return NextResponse.redirect(url);
   }
 
   const decodedToken = await verifyToken(token) as { payload: { role: string } };

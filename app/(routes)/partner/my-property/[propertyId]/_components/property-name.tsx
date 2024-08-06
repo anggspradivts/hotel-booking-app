@@ -38,7 +38,7 @@ const PropertyNameForm = ({ property }: PropertyNameFormProps) => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const res = await axios.patch("/api/property/edit", data);
+      const res = await axios.patch("/api/partner/property/edit", data);
       if (res.status === 200) {
         toast.success("Property name updated successfully");
         router.refresh();

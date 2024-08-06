@@ -40,7 +40,7 @@ const PropertyDescriptionForm = ({
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const res = await axios.patch("/api/property/edit", data);
+      const res = await axios.patch("/api/partner/property/edit", data);
       if (res.status === 200) {
         toast.success("Property description updated successfully");
         router.refresh();

@@ -3,7 +3,7 @@ import { Property } from "@prisma/client";
 import clsx from "clsx";
 import { useState } from "react";
 
-import { Image, Pencil, X } from "lucide-react";
+import { Image as LucideImage, Pencil, X } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,8 @@ import {
   PropertyMainImageUpload,
   UploadedFile,
 } from "@/components/uploadthing/file-upload";
+import { revalidatePath } from "next/cache";
+import Image from "next/image"
 
 interface PropertyMainImgFormProps {
   property: Property;
@@ -29,19 +31,18 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
         imgUrl, 
         id: property.id 
       };
-      const response = await axios.patch("/api/property/edit", data);
+      const response = await axios.patch("/api/partner/property/edit", data);
       if (response.status === 200) {
-        toast.success("Success edit property image!")
+        toast.success("Success edit property image!");
         router.refresh();
       }
-      console.log(data);
     } catch (error: any) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
       }
     } finally {
       setIsLoading(false);
-      setIsEditting(false)
+      setIsEditting(false);
     }
   };
 
@@ -84,14 +85,15 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
             <div
               className={clsx(
                 "flex justify-center items-center w-full rounded overflow-hidden",
-                "h-[200px] w-auto",
+                "h-[200px] relative",
                 "bg-slate-300"
               )}
             >
-              <img
+              <Image
                 className="w-full h-full object-cover"
                 src={property.imgUrl}
                 alt="property-img"
+                layout="fill"
               />
             </div>
           ) : (
@@ -102,7 +104,7 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
                 "bg-slate-300"
               )}
             >
-              <Image className="h-6 w-6" />
+              <LucideImage className="h-6 w-6" />
               <p className="text-sm">No image provided</p>
             </div>
           )

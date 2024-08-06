@@ -14,7 +14,7 @@ const PropertyImagesPage = ({ property }: PropertyImagesProps) => {
     try {
       const imgUrl = res[0].url;
       const data = { imgUrl, propertyId: property.id }
-      const response = await axios.post("/api/property/create/property-images", data);
+      const response = await axios.post("/api/partner/property/create/property-images", data);
       if (response.status === 200) {
         toast.success("Image uploaded successfully");
         router.refresh()
