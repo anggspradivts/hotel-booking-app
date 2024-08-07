@@ -26,7 +26,7 @@ export async function POST(
       httpOnly: true, //token is not accessible from client side if "true"
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 3600,
+      maxAge: 86400,
       path: '/'
     });
 

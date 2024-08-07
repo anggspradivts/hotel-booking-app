@@ -11,14 +11,6 @@ export async function DELETE(
   try {
     const reqHeaders = headers();
     const utapi = new UTApi();
-    
-    // const referer = reqHeaders.get("referer");
-    // console.log("reff", referer)
-    // const allowedReferer = "http://localhost:3000/api/partner/property/create/main-image";
-    // if (!referer || referer !== allowedReferer) {
-    //   console.log("Action not allowed")
-    //   return NextResponse.json({ message: "Action not allowed" }, { status: 401 });
-    // }
 
     const data = await req.json();
     const { key, url, propertyId } = data;
@@ -71,11 +63,11 @@ export async function DELETE(
         }
       });
       return NextResponse.json({ message: "Success  deleting image" }, { status: 200 })
-      
+
     } else {
       return NextResponse.json({ message: "Failed  deleting image" }, { status: 500 })
     }
   } catch (error) {
-    console.log("[ERR_DELETE_MAIN_IMAGE]")
+    console.log("[ERR_DELETE_MAIN_IMAGE]", error)
   }
 }

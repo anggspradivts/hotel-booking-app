@@ -1,14 +1,15 @@
 "use client";
 import { MainImage, Property, PropertyLocation } from "@prisma/client";
 import clsx from "clsx";
-import { Image } from "lucide-react";
+import { Image as LucideImage } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MyPropertyPageProps {
   myProperty: (Property & { LocationDetails: PropertyLocation[], MainImage: MainImage[] })[];
 }
 const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
-  // const propertyImage = 
+
   return (
     <>
       {myProperty.map((prop) => (
@@ -21,18 +22,19 @@ const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
             )}
           >
             <div className="h-3/5 relative">
-              <p className="absolute right-2 top-2 text-xs font-medium px-1 rounded-full bg-slate-200">
+              <p className="absolute z-10 right-2 top-2 text-xs font-medium px-1 rounded-full bg-slate-200">
                 {prop.confirmed ? "verified" : "unverified"}
               </p>
               {prop.MainImage && prop.MainImage.length > 0 && prop.MainImage[0].url ? (
-                <img
+                <Image
                   className="w-full h-full object-cover"
                   src={prop.MainImage[0].url || ""}
                   alt="property-img"
+                  layout="fill"
                 />
               ) : (
                 <div className="bg-slate-300 w-full h-full flex justify-center items-center">
-                  <Image className="h-6 w-6" />
+                  <LucideImage className="h-6 w-6" />
                 </div>
               )}
             </div>

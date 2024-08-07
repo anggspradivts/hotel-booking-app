@@ -28,7 +28,7 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
   const handleFileUpload = async (res: UploadedFile) => {
     try {
       setIsLoading(true);
-      const utRes = res[0]; //uplloadthing response when uploading image
+      const utRes = res[0]; //uploadthing response when uploading image
       const { key, url } = utRes
       const data = {
         key,

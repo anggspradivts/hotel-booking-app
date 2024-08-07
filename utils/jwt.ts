@@ -15,7 +15,7 @@ export async function verifyToken(token: string) {
 export async function signToken(payload: object) {
   const token = await new SignJWT({ payload })
     .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime('2h')
+    .setExpirationTime('1d')
     .sign(secret);
   return token;
 }
