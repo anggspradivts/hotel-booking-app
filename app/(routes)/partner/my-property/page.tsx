@@ -18,7 +18,8 @@ const Page = async () => {
       OwnerId: user.userId,
     },
     include: {
-      LocationDetails: true
+      LocationDetails: true,
+      MainImage: true
     }
   });
 

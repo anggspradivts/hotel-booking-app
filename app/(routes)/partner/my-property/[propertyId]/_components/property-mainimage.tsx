@@ -1,9 +1,9 @@
 "use client";
-import { Property } from "@prisma/client";
+import { MainImage, Property } from "@prisma/client";
 import clsx from "clsx";
 import { useState } from "react";
 
-import { Image as LucideImage, Pencil, X } from "lucide-react";
+import { Image as LucideImage, Pencil, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -12,10 +12,10 @@ import {
   UploadedFile,
 } from "@/components/uploadthing/file-upload";
 import { revalidatePath } from "next/cache";
-import Image from "next/image"
+import Image from "next/image";
 
 interface PropertyMainImgFormProps {
-  property: Property;
+  property: Property & { MainImage: MainImage[] };
 }
 const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
   const [isEditting, setIsEditting] = useState(false);
@@ -23,15 +23,19 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
 
   const router = useRouter();
 
+  const imgData = property.MainImage[0] || null
+
   const handleFileUpload = async (res: UploadedFile) => {
     try {
       setIsLoading(true);
-      const imgUrl = res[0].url;
-      const data = { 
-        imgUrl, 
-        id: property.id 
+      const utRes = res[0]; //uplloadthing response when uploading image
+      const { key, url } = utRes
+      const data = {
+        key,
+        url,
+        propertyId: property.id,
       };
-      const response = await axios.patch("/api/partner/property/edit", data);
+      const response = await axios.post("/api/partner/property/create/main-image", data);
       if (response.status === 200) {
         toast.success("Success edit property image!");
         router.refresh();
@@ -81,7 +85,7 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
       </div>
       <div>
         {!isEditting ? (
-          property.imgUrl ? (
+          property.MainImage.length > 0 ? (
             <div
               className={clsx(
                 "flex justify-center items-center w-full rounded overflow-hidden",
@@ -91,7 +95,7 @@ const PropertyMainImgForm = ({ property }: PropertyMainImgFormProps) => {
             >
               <Image
                 className="w-full h-full object-cover"
-                src={property.imgUrl}
+                src={imgData.url || ""}
                 alt="property-img"
                 layout="fill"
               />

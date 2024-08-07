@@ -14,11 +14,11 @@ export const fetchUser = async () => {
 export const fetchUserServer = async (reqHeaders: Headers) => {
   try {
     const cookies = reqHeaders.get("cookie") || "";
-    console.log("test function:", cookies);
 
     const res = await fetch("http://localhost:3000/api/auth/user", {
       method: "GET",
       headers: {
+        "Content-Type": "application/json",
         "Cookie": cookies,
       },
     });
@@ -29,8 +29,7 @@ export const fetchUserServer = async (reqHeaders: Headers) => {
 
     const { userId, name, email, role, message } = await res.json();
     return { userId, email, name, role, message };
-  } catch (error) {
+  } catch (error: any) {
     console.log("[ERR_FETCHUSER_SV]", error);
-    return null;
   }
 };
