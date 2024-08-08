@@ -22,13 +22,14 @@ import {
 interface LeafletMapViewProps {
   lat: number;
   lng: number;
+  style: React.CSSProperties
 }
-export const LeafletMapView = ({ lat, lng }: LeafletMapViewProps) => {
+export const LeafletMapView = ({ lat, lng, style }: LeafletMapViewProps) => {
   return (
     <MapContainer
       center={[lat, lng]}
       zoom={13}
-      style={{ height: "300px", width: "100%" }}
+      style={style}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -77,7 +77,11 @@ const PropertyLocationForm = ({
       </div>
       <div>
         {!isEditting ? (
-          <LeafletMapView lat={initialLocation.lat} lng={initialLocation.lng} />
+          <LeafletMapView
+            lat={initialLocation.lat}
+            lng={initialLocation.lng}
+            style={{ height: "300px", width: "100%" }}
+          />
         ) : (
           <>
             <LeafletMapTsx
@@ -86,12 +90,6 @@ const PropertyLocationForm = ({
               setCoordinates={handleCoordinates}
               propertyId={property.id}
             />
-            {/* <MapLeafletGeocoder
-              initialLat={initialLocation.lat}
-              initialLng={initialLocation.lng}
-              setCoordinates={handleCoordinates}
-              propertyId={property.id}
-            /> */}
             <div className={clsx("mt-4", "text-sm text-slate-600")}>
               <p>Click the map to set the coordinates</p>
               {coordinates && (
@@ -100,7 +98,9 @@ const PropertyLocationForm = ({
                     target="_blank"
                     href={`https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}`}
                   >
-                    <p className="text-sky-600 hover:text-sky-500">Open in google map </p>
+                    <p className="text-sky-600 hover:text-sky-500">
+                      Open in google map{" "}
+                    </p>
                   </Link>
                 </div>
               )}

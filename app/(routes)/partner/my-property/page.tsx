@@ -37,7 +37,7 @@ const Page = async () => {
       >
         <h1 className={clsx("text-lg font-semibold")}>My Properties</h1>
       </div>
-      <div className="pt-6 flex space-x-5">
+      <div className="pt-6 flex space-x-5 min-w-[400px] overflow-x-scroll">
         <MyPropertyPage myProperty={myProperty} />
       </div>
     </div>

@@ -7,13 +7,17 @@ const Homepage = async () => {
   const getProperties = await db.property.findMany({
     where: {
       confirmed: true
+    },
+    include: {
+      LocationDetails: true,
+      MainImage: true
     }
   });
   
   return ( 
     <div className="md:mx-28">
       <BannerSec />
-      <PropertySec />
+      <PropertySec property={getProperties} />
     </div>
    );
 }
