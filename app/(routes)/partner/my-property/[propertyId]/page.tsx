@@ -9,6 +9,7 @@ import PropertyMainImgForm from "./_components/property-mainimage";
 import PropertyDetailForm from "./_components/property_detail";
 import PropertyTypeForm from "./_components/property-type"
 import PropertyImagesPage from "./_components/property-images";
+import PropertyFacilitiesForm from "./_components/property-facilities";
 
 const page = async ({ params }: { params: { propertyId: string } }) => {
   const { propertyId } = params;
@@ -37,6 +38,11 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
       },
       Images: true,
       MainImage: {
+        where: {
+          propertyId: propertyId
+        }
+      },
+      Facilities: {
         where: {
           propertyId: propertyId
         }
@@ -76,7 +82,7 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
           <PropertyMainImgForm property={property} />
           <PropertyDescriptionForm property={property} />
           <PropertyTypeForm property={property} propertyType={propertyType}/>
-          {/* price section */}
+          <PropertyFacilitiesForm property={property} />
         </div>
       </div>
       <div>

@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import PropertyIdPage from "./PropertyIdPage";
 import ImageSecPage from "./_components/image-sec";
 import DescriptionSecPage from "./_components/description-sec";
+import FacilitiesSecPage from "./_components/facilities-sec";
 
 const page = async ({ params }: { params: { propertyId: string} }) => {
   const { propertyId } = params;
@@ -14,6 +15,11 @@ const page = async ({ params }: { params: { propertyId: string} }) => {
       Images: true,
       MainImage: true,
       LocationDetails: {
+        where: {
+          propertyId: propertyId
+        }
+      },
+      Facilities: {
         where: {
           propertyId: propertyId
         }
@@ -30,8 +36,9 @@ const page = async ({ params }: { params: { propertyId: string} }) => {
   }
 
   return ( 
-    <div className="px-1 md:px-28 space-y-5">
+    <div className="px-1 md:px-28 space-y-20">
       <ImageSecPage property={property}/>
+      <FacilitiesSecPage property={property} />
       <DescriptionSecPage property={property} />
     </div>
    );

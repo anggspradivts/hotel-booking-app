@@ -12,7 +12,14 @@ import {
 import clsx from "clsx";
 import { useState } from "react";
 
-import { ChevronDown, ChevronRight, Pencil, PlusCircle, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Pencil,
+  PlusCircle,
+  Trash2,
+  X,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -77,7 +84,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
 
       if (isAdding) {
         //check if it is add details state
-        res = await axios.post("/api/property/create/details", data);
+        res = await axios.post("/api/partner/property/create/details", data);
         if (res.status === 200) {
           toast.success("Property added successfully");
           router.refresh();
@@ -108,11 +115,16 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
 
   const handleDelete = async (propertyId: string, roomOptId: string) => {
     try {
-      console.log(propertyId);
+      const data = { propertyId, roomOptId };
+      const res = await axios.delete("/api/partner/property/delete/details", {
+        data: data,
+      });
+      toast.success("Property room deleted");
     } catch (error) {
       toast.error("Something went wrong!");
     } finally {
       setIsLoading(false);
+      router.refresh();
     }
   };
 
@@ -211,7 +223,9 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
             ))
           ) : (
             <div>
-              <h2 className="text-sm italic">No room type provided, add room type</h2>
+              <h2 className="text-sm italic">
+                No room type provided, add room type
+              </h2>
             </div>
           )
         ) : (
@@ -398,11 +412,10 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                   handleDelete(property.id, roomOpt.id)
                                 }
                                 className="p-2 shadow-md rounded-lg bg-red-600 text-white"
-                                type="submit"
+                                disabled={isLoading}
+                                type="button"
                               >
-                                {isLoading
-                                  ? "Deleting..."
-                                  : "Delete this room details"}
+                                {isLoading ? "Deleting..." : <Trash2 />}
                               </button>
                               <button
                                 disabled={isSubmitting || !isValid}

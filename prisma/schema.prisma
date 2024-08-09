@@ -56,7 +56,7 @@ model Property {
   ownerId User?  @relation(fields: [OwnerId], references: [id])
 
   PropertyType String
-  propertyType PropertyType? @relation(fields: [PropertyType], references: [name])
+  propertyType PropertyType? @relation(fields: [PropertyType], references: [name], onDelete: Cascade)
 
   Booked          BookedHistory[]
   LocationDetails PropertyLocation[]
@@ -73,7 +73,7 @@ model PropertyMainFacilities {
   name String?
 
   propertyId String?
-  property Property? @relation(fields: [propertyId], references: [id])
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,7 +85,7 @@ model MainImage {
   key String?
 
   propertyId String? @unique
-  property_id Property? @relation(fields: [propertyId], references: [id])
+  property_id Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -103,7 +103,7 @@ model PropertyLocation {
   longitude Float?
 
   propertyId String?   @unique
-  property   Property? @relation(fields: [propertyId], references: [id])
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -113,7 +113,7 @@ model PropertyRoomOption {
   id String @id @default(uuid())
 
   propertyId String
-  property Property? @relation(fields: [propertyId], references: [id])
+  property Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   RoomTypes RoomTypes[]
   GuestsTypes GuestsType[]
@@ -127,7 +127,7 @@ model RoomTypes {
   name String?
 
   PropertyRoomOptId String
-  properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id])
+  properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id], onDelete: Cascade)
 
   BedTypes BedTypes[]
   RoomFacilities RoomTypesFacilities[]
@@ -140,7 +140,7 @@ model BedTypes {
   name String? 
 
   RoomTypesId String
-  room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id])
+  room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -150,7 +150,7 @@ model RoomTypesFacilities {
   name String?
 
   RoomTypesId String
-  room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id])
+  room_type RoomTypes? @relation(fields: [RoomTypesId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -160,7 +160,7 @@ model GuestsType {
   id String @id @default(uuid())
 
   PropertyRoomOptId String?
-  properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id])
+  properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id], onDelete: Cascade)
 }
 
 model PropertyType {
@@ -178,7 +178,7 @@ model PropertyImages {
   url String?
 
   propertyId String?
-  property_id Property? @relation(fields: [propertyId], references: [id])
+  property_id Property? @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   editedAt DateTime @updatedAt
