@@ -10,6 +10,7 @@ import PropertyDetailForm from "./_components/property_detail";
 import PropertyTypeForm from "./_components/property-type"
 import PropertyImagesPage from "./_components/property-images";
 import PropertyFacilitiesForm from "./_components/property-facilities";
+import DeletePropertyBtn from "./_components/delete-property";
 
 const page = async ({ params }: { params: { propertyId: string } }) => {
   const { propertyId } = params;
@@ -85,7 +86,8 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
           <PropertyFacilitiesForm property={property} />
         </div>
       </div>
-      <div>
+      <div className="flex flex-col justify-center items-center space-y-5">
+        <DeletePropertyBtn property={property} />
         <PropertyImagesPage property={property} />
       </div>
     </div>

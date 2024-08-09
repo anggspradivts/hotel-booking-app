@@ -109,7 +109,7 @@ const PropertyFacilitiesForm = ({ property }: PropertyFacilitiesFormProps) => {
               property.Facilities.map((facility) => (
                 <p
                   key={facility.id}
-                  className="text-sm p-2 bg-slate-200 rounded-full"
+                  className="text-sm p-2 mb-2 bg-slate-200 rounded-full"
                 >
                   {facility.name}
                 </p>

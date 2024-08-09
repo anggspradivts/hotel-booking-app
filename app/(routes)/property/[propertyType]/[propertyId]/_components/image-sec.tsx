@@ -73,7 +73,7 @@ const ImageSecPage = ({ property }: ImageSecPageProps) => {
               </div>
             ))}
             {isShow && (
-              <div className="fixed flex justify-center bg-black bg-opacity-85 items-center h-screen w-screen top-0 bottom-0 right-0 left-0 z-50">
+              <div className="fixed flex justify-center bg-black bg-opacity-85 items-center inset-0 z-[9999]">
                 <div className="relative bg-white p-5 w-full  md:p-0 h-[400px] md:w-[600px]">
                   <Image
                     src={isShow}
