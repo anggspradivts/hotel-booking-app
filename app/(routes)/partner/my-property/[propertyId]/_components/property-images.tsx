@@ -33,9 +33,9 @@ const PropertyImagesPage = ({ property }: PropertyImagesProps) => {
         <h2 className="text-lg font-semibold">Property Images</h2>
       </div>
       <div className="images-container grid grid-cols-2 md:grid-cols-4 ">
-        {property.Images.map((prop) => (
+        {property.Images.length > 0 && property.Images.map((prop) => (
           <div key={prop.id} className="h-[210px] overflow-hidden">
-            <img src={prop.url ?? ""} alt="property-img" className="h-full w-full object-cover" />
+            <img src={prop.url || ""} alt="property-img" className="h-full w-full object-cover" />
           </div>
         ))}
         <div className="h-[210px]">

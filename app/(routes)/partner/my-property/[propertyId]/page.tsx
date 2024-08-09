@@ -37,7 +37,11 @@ const page = async ({ params }: { params: { propertyId: string } }) => {
           }
         }
       },
-      Images: true,
+      Images: {
+        where: {
+          propertyId: propertyId
+        }
+      },
       MainImage: {
         where: {
           propertyId: propertyId
