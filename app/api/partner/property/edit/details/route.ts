@@ -14,14 +14,15 @@ export async function PATCH(req: Request) {
 
     const data = await req.json();
     const { 
-      newRoomTypesName,
+      roomTypesName,
       roomTypesId,
-      newBedTypesName,
+      bedTypesName,
       bedTypesId,
-      newRoomTypeFacilities,
+      roomTypesFacilities,
       roomFacilitiesId,
       propertyId, 
-      roomOptId 
+      roomOptId,
+      roomPrice,
     } = data;
 
     const findProperty = await db.property.findUnique({
@@ -47,35 +48,46 @@ export async function PATCH(req: Request) {
     })
     if(!findRoomOption) return NextResponse.json({ message: "Room option not found" }, { status: 404 })
     
-    if (newRoomTypesName) {
+    if (roomTypesName) {
       await db.roomTypes.update({
         where: {
           id: roomTypesId
         },
         data: {
-          name: newRoomTypesName,
+          name: roomTypesName,
         }
       });
     }
 
-    if (newBedTypesName) {
+    if (roomPrice) {
+      await db.roomTypes.update({
+        where: {
+          id: roomTypesId
+        },
+        data: {
+          price: roomPrice,
+        }
+      });
+    }
+
+    if (bedTypesName) {
       await db.bedTypes.update({
         where: {
           id: bedTypesId
         },
         data: {
-          name: newBedTypesName
+          name: bedTypesName
         }
       })
     }
 
-    if (newRoomTypeFacilities) {
+    if (roomTypesFacilities) {
       await db.roomTypesFacilities.update({
         where: {
           id: roomFacilitiesId
         },
         data: {
-          name: newRoomTypeFacilities
+          name: roomTypesFacilities
         }
       })
     }

@@ -13,11 +13,11 @@ export async function POST(req: Request) {
     }
 
     const data = await req.json();
-    const { roomTypesName, bedTypesName, roomTypesFacilities, id } = data
+    const { roomTypesName, bedTypesName, roomTypesFacilities, roomPrice, propertyId } = data
 
     const findProperty = await db.property.findUnique({
       where: {
-        id: id
+        id: propertyId
       }
     });
     
@@ -37,9 +37,12 @@ export async function POST(req: Request) {
       }
     });
 
+    console.log("rtName", roomTypesName)
+
     const createRoomTypes = await db.roomTypes.create({
       data: {
         name: roomTypesName,
+        price: roomPrice,
         PropertyRoomOptId: createRoomOption.id
       }
     });

@@ -27,12 +27,13 @@ import DataGrid from "react-data-grid";
 import "react-data-grid/lib/styles.css";
 
 const formSchema = z.object({
-  newRoomTypesName: z.string(),
+  roomTypesName: z.string(),
   roomTypesId: z.string(),
-  newBedTypesName: z.string(),
+  bedTypesName: z.string(),
   bedTypesId: z.string(),
-  newRoomTypeFacilities: z.string(),
+  roomTypesFacilities: z.string(),
   roomFacilitiesId: z.string(),
+  roomPrice: z.string(),
   propertyId: z.string(),
 });
 
@@ -60,12 +61,13 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      newRoomTypesName: "",
+      roomTypesName: "",
       roomTypesId: "",
-      newBedTypesName: "",
+      bedTypesName: "",
       bedTypesId: "",
-      newRoomTypeFacilities: "",
+      roomTypesFacilities: "",
       roomFacilitiesId: "",
+      roomPrice: "",
       propertyId: property.id,
     },
   });
@@ -88,6 +90,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
         if (res.status === 200) {
           toast.success("Property added successfully");
           router.refresh();
+          setIsAdding(false);
         }
       } else if (isEditting) {
         //check if it is edit details state
@@ -96,6 +99,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
         if (res.status === 200) {
           toast.success("Property updated successfully");
           router.refresh();
+          setIsEditting(false);
         }
       } else {
         console.log("type of action is not defined");
@@ -124,6 +128,8 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
       toast.error("Something went wrong!");
     } finally {
       setIsLoading(false);
+      setIsAdding(false);
+      setIsEditting(false);
       router.refresh();
     }
   };
@@ -199,7 +205,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                             .flat()
                             .map((bed) => (
                               <div className="">
-                                <span>Room type: </span>
+                                <span>Bed type: </span>
                                 <span>{bed.name}</span>
                               </div>
                             ))}
@@ -213,6 +219,16 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                               <div>
                                 <span>Available facilities: {""}</span>
                                 <span>{facility.name}</span>
+                              </div>
+                            ))}
+                        </div>
+                        <div>
+                          {roomOpt.RoomTypes.map((roomType) => roomType.price)
+                            .flat()
+                            .map((price, index) => (
+                              <div key={index}>
+                                <span>Price: {" "}</span>
+                                <span>{price?.toString()}</span>
                               </div>
                             ))}
                         </div>
@@ -239,7 +255,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                 <div className="space-y-1">
                   <p className="text-sm font-bold">Room Type Name:</p>
                   <input
-                    {...register("newRoomTypesName")}
+                    {...register("roomTypesName")}
                     id="type-name"
                     className={clsx(
                       "p-2 rounded text-sm w-full ",
@@ -255,7 +271,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                     {bedTypes.map((bed) => (
                       <>
                         <input
-                          {...register("newBedTypesName")}
+                          {...register("bedTypesName")}
                           id="type-beds"
                           className=""
                           type="radio"
@@ -270,7 +286,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                   <p className="text-sm font-bold">Room Facilities:</p>
                   <div className="flex relative">
                     <input
-                      {...register("newRoomTypeFacilities")}
+                      {...register("roomTypesFacilities")}
                       id="facilities"
                       className={clsx(
                         "p-2 text-sm w-full ",
@@ -278,6 +294,21 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                       )}
                       type="text"
                       placeholder="e.g, air conditioner, tv, etc."
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold">Room Price per night:</p>
+                  <div className="flex relative">
+                    <input
+                      {...register("roomPrice")}
+                      id="price"
+                      className={clsx(
+                        "p-2 text-sm w-full ",
+                        "border-b border-slate-200 focus:border-slate-300 focus:outline-none"
+                      )}
+                      type="text"
+                      placeholder="e.g, '140.99'"
                     />
                   </div>
                 </div>
@@ -336,7 +367,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                       "p-2 rounded text-sm w-full ",
                                       "border border-slate-200 focus:border-slate-300 focus:outline-none"
                                     )}
-                                    {...register("newRoomTypesName")}
+                                    {...register("roomTypesName")}
                                     type="text"
                                     placeholder="Enter your new room types name"
                                     onChange={() =>
@@ -365,7 +396,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                         "p-2 rounded text-sm w-full ",
                                         "border border-slate-200 focus:border-slate-300 focus:outline-none"
                                       )}
-                                      {...register("newBedTypesName")}
+                                      {...register("bedTypesName")}
                                       type="text"
                                       placeholder="Enter your new bed types"
                                       onChange={() => {
@@ -393,7 +424,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                         "p-2 rounded text-sm w-full ",
                                         "border border-slate-200 focus:border-slate-300 focus:outline-none"
                                       )}
-                                      {...register("newRoomTypeFacilities")}
+                                      {...register("roomTypesFacilities")}
                                       type="text"
                                       placeholder="Enter your new room types facilities"
                                       onChange={() =>
@@ -405,6 +436,30 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                                     />
                                   </>
                                 ))}
+                            </div>
+                            <div>
+                              {roomOpt.RoomTypes.map((roomType) => (
+                                <>
+                                  <span className="text-sm italic">
+                                    current room price:{" "}
+                                    <span className="font-semibold">
+                                      {roomType.price?.toString()}
+                                    </span>
+                                  </span>
+                                  <input
+                                    className={clsx(
+                                      "p-2 rounded text-sm w-full ",
+                                      "border border-slate-200 focus:border-slate-300 focus:outline-none"
+                                    )}
+                                    {...register("roomPrice")}
+                                    type="text"
+                                    placeholder="Enter your new room price per night"
+                                    onChange={() =>
+                                      form.setValue("roomTypesId", roomType.id)
+                                    }
+                                  />
+                                </>
+                              ))}
                             </div>
                             <div className="flex items-center justify-between">
                               <button

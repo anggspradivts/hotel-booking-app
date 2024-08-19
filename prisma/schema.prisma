@@ -125,6 +125,7 @@ model PropertyRoomOption {
 model RoomTypes {
   id String @id @default(uuid())
   name String?
+  price Decimal?
 
   PropertyRoomOptId String
   properties_rooms PropertyRoomOption? @relation(fields: [PropertyRoomOptId], references: [id], onDelete: Cascade)
