@@ -3,6 +3,7 @@ import PropertyIdPage from "./PropertyIdPage";
 import ImageSecPage from "./_components/image-sec";
 import DescriptionSecPage from "./_components/description-sec";
 import FacilitiesSecPage from "./_components/facilities-sec";
+import RoomOptionSec from "./_components/roomoption-sec";
 
 const page = async ({ params }: { params: { propertyId: string} }) => {
   const { propertyId } = params;
@@ -23,6 +24,19 @@ const page = async ({ params }: { params: { propertyId: string} }) => {
         where: {
           propertyId: propertyId
         }
+      },
+      RoomOption: {
+        where: {
+          propertyId: propertyId
+        },
+        include: {
+          RoomTypes: {
+            include: {
+              BedTypes: true,
+              RoomFacilities: true
+            }
+          }
+        }
       }
     }
   });
@@ -40,6 +54,7 @@ const page = async ({ params }: { params: { propertyId: string} }) => {
       <ImageSecPage property={property}/>
       <FacilitiesSecPage property={property} />
       <DescriptionSecPage property={property} />
+      <RoomOptionSec property={property} />
     </div>
    );
 }

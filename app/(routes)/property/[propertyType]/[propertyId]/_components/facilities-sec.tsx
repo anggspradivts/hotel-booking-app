@@ -13,7 +13,7 @@ const FacilitiesSecPage = ({ property }: FacilitiesSecPageProps) => {
       <div className="flex flex-wrap space-x-3">
         {facilities?.length > 0 ? (
           facilities.map((facility) => (
-            <p key={facility.id} className="p-2 mb-2 bg-slate-200 rounded-full">
+            <p key={facility.id} className="p-2 mb-2 bg-slate-100 rounded-full">
               {facility.name}
             </p>
           ))
