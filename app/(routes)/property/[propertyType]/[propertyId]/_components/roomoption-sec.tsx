@@ -42,12 +42,12 @@ const RoomOptionSec = ({ property }: RoomOptionSecProps) => {
                   </div>
                   <div className="border border-black">
                     <div className="flex flex-col justify-center items-center p-5">
-                      <button className="bg-indigo-400 text-white p-1 px-3">Reserve</button>
-                      <p>{roomType.price}</p>
+                      <p>{roomType.price?.toNumber()}$ per night</p>
+                      <button className="bg-indigo-400 text-white p-1 px-3">
+                        Reserve
+                      </button>
                     </div>
-                    <div className="">
-
-                    </div>
+                    <div className=""></div>
                   </div>
                 </div>
               </div>
