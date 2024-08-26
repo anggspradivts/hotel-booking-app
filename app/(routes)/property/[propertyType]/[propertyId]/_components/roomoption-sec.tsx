@@ -19,10 +19,10 @@ interface RoomOptionSecProps {
 const RoomOptionSec = ({ property }: RoomOptionSecProps) => {
   return (
     <div>
-      <div className="flex justify-center items-center my-16">
+      <div className="flex my-10 py-5 border-b border-slate-300">
         <h1 className="font-semibold text-lg">Room Details</h1>
       </div>
-      <div className="flex flex-col space-y-5">
+      <div className="flex flex-col space-y-3">
         {property.RoomOption.map((roomOpt) => (
           <div key={roomOpt.id}>
             {roomOpt.RoomTypes.map((roomType) => (
@@ -40,9 +40,10 @@ const RoomOptionSec = ({ property }: RoomOptionSecProps) => {
                       (facilities) => facilities.name
                     )}
                   </div>
-                  <div className="border md:border-black p-5">
-                    <div>
-                      <button></button>
+                  <div className="border border-black">
+                    <div className="flex flex-col justify-center items-center p-5">
+                      <button className="bg-indigo-400 text-white p-1 px-3">Reserve</button>
+                      <p>{roomType.price}</p>
                     </div>
                     <div className="">
 
