@@ -4,6 +4,7 @@ import ImageSecPage from "./_components/image-sec";
 import DescriptionSecPage from "./_components/description-sec";
 import FacilitiesSecPage from "./_components/facilities-sec";
 import RoomOptionSec from "./_components/roomoption-sec";
+import DatePickerPage from "./_components/date-picker";
 
 const page = async ({ params }: { params: { propertyId: string} }) => {
   const { propertyId } = params;
@@ -52,6 +53,7 @@ const page = async ({ params }: { params: { propertyId: string} }) => {
   return ( 
     <div className="px-1 md:px-28 space-y-20">
       <ImageSecPage property={property}/>
+      <DatePickerPage />
       <FacilitiesSecPage property={property} />
       <DescriptionSecPage property={property} />
       <RoomOptionSec property={property} />

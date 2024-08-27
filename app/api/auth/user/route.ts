@@ -3,6 +3,8 @@ import { verifyToken } from "@/utils/jwt";
 import { db } from "@/lib/db";
 import { parse, serialize } from "cookie";
 import { isTokenExpired } from "@/utils/token-validity";
+import { fetchUserServer } from "@/utils/user";
+import { headers } from "next/headers";
 
 export async function GET(req: Request) {
   try {
@@ -67,5 +69,28 @@ export async function GET(req: Request) {
   } catch (error) {
     console.log("[ERR_FETCH_USER]", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function POST(
+  req: Request
+) {
+  try {
+    const useHeaders = headers();
+    const user = await fetchUserServer(useHeaders);
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const data = await req.json();
+    const { formatCheckinDate, formatCheckoutDate } = data;
+    if (!formatCheckinDate && !formatCheckoutDate) {
+      return NextResponse.json({ message: "No checkin or checkout date provided" }, { status: 404 })
+    }
+
+    return NextResponse.json({ message: "Success save user date information on local storage", data }, { status: 200 })
+  } catch (error) {
+    console.log("[ERR_SET_USER_DATE]", error);
+    throw new Error("Internal server error")
   }
 }

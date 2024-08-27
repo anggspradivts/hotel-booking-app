@@ -9,7 +9,7 @@ import {
 import { MapPin, User, UserCircle, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import DatePicker from "react-datepicker"
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface ImageSecPageProps {
@@ -22,7 +22,6 @@ interface ImageSecPageProps {
 const ImageSecPage = ({ property }: ImageSecPageProps) => {
   const [isShow, setIsShow] = useState<string | null>(null);
   const [isMapView, setIsMapView] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(null);
 
   const findMainImg = property.MainImage.find(
     (img) => img.propertyId === property.id
@@ -49,7 +48,9 @@ const ImageSecPage = ({ property }: ImageSecPageProps) => {
 
   return (
     <div className="">
-      <h1 className="py-5 font-semibold text-3xl text-indigo-600">{property.name}</h1>
+      <h1 className="py-5 font-semibold text-3xl text-indigo-600">
+        {property.name}
+      </h1>
       <div className="grid md:grid-cols-2 gap-5">
         <div className="img-container h-[400px] min-w-full">
           <div className="main-img relative h-2/3">
@@ -142,13 +143,11 @@ const ImageSecPage = ({ property }: ImageSecPageProps) => {
               Rating: 9.8
             </div>
             <div className="review border border-indigo-300 h-[120px] rounded-lg">
-              {/* <div className="flex items-center space-x-2 p-1 border-b border-slate-300">
+              <div className="flex items-center space-x-2 p-1 border-b border-slate-300">
                 <UserCircle />
                 <h1 className="text-xs overflow-auto">User</h1>
               </div>
-              <div className="overflow-auto text-xs p-1">
-              </div> */}
-              
+              <div className="overflow-auto text-xs p-1"></div>
             </div>
           </div>
         </div>
