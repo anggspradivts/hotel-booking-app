@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const DatePickerPage = () => {
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
-  const [currentDate, setCurrentDate] = useState<Date | null>(new Date())
+  const [currentDate, setCurrentDate] = useState<Date | null>(new Date());
 
   const router = useRouter();
 

@@ -2,14 +2,16 @@ import { MainImage, Property, PropertyLocation } from "@prisma/client";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { Image as LucideImage } from "lucide-react"
+import { Image as LucideImage } from "lucide-react";
 
 interface PropertySecProps {
-  property: (Property & { LocationDetails: PropertyLocation[], MainImage: MainImage[] })[]
+  property: (Property & {
+    LocationDetails: PropertyLocation[];
+    MainImage: MainImage[];
+  })[];
 }
 const PropertySec = ({ property }: PropertySecProps) => {
-  
-  return ( 
+  return (
     <div>
       {property.map((prop) => (
         <Link key={prop.id} href={`/property/${prop.PropertyType}/${prop.id}`}>
@@ -21,10 +23,9 @@ const PropertySec = ({ property }: PropertySecProps) => {
             )}
           >
             <div className="h-3/5 relative">
-              <p className="absolute z-10 right-2 top-2 text-xs font-medium px-1 rounded-full bg-slate-200">
-                {/* {prop.confirmed ? "verified" : "unverified"} */}
-              </p>
-              {prop.MainImage && prop.MainImage.length > 0 && prop.MainImage[0].url ? (
+              {prop.MainImage &&
+              prop.MainImage.length > 0 &&
+              prop.MainImage[0].url ? (
                 <Image
                   className="w-full h-full object-cover"
                   src={prop.MainImage[0].url || ""}
@@ -59,7 +60,7 @@ const PropertySec = ({ property }: PropertySecProps) => {
         </Link>
       ))}
     </div>
-   );
-}
- 
+  );
+};
+
 export default PropertySec;
