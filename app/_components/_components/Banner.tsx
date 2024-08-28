@@ -27,7 +27,7 @@ const BannerSec = () => {
       }
     };
     setUserData();
-  }, [checkinDate, checkoutDate]);
+  }, []);
 
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {

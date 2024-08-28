@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
@@ -19,16 +19,16 @@ const DatePickerPage = () => {
   useEffect(() => {
     const setUserData = () => {
       //the localStorage data is string, it should be Date | null
-      const parsedChekin = getCheckin ? new Date(getCheckin) : null;
-      const parsedChekout = getCheckout ? new Date(getCheckout) : null;
-      if (parsedChekin && parsedChekout) {
-        setCheckinDate(parsedChekin);
-        setCheckoutDate(parsedChekout);
+      const parsedCheckin = getCheckin ? new Date(getCheckin) : null;
+      const parsedCheckout = getCheckout ? new Date(getCheckout) : null;
+      if (parsedCheckin && parsedCheckout) {
+        setCheckinDate(parsedCheckin);
+        setCheckoutDate(parsedCheckout);
       }
     };
     setUserData();
-  }, [checkinDate, checkoutDate]);
-
+  }, []);
+  
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {
       const formatCheckinDate = checkinDate.toLocaleString("en-US", {
