@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -8,6 +9,9 @@ import toast from "react-hot-toast";
 const DatePickerPage = () => {
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
+  const [currentDate, setCurrentDate] = useState<Date | null>(new Date())
+
+  const router = useRouter();
 
   const getCheckin = localStorage.getItem("checkin");
   const getCheckout = localStorage.getItem("checkout");
@@ -44,6 +48,7 @@ const DatePickerPage = () => {
         localStorage.setItem("checkin", responseData.formatCheckinDate);
         localStorage.setItem("checkout", responseData.formatCheckoutDate);
         toast.success("User data saved successfully");
+        router.refresh();
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -53,32 +58,44 @@ const DatePickerPage = () => {
   const deleteUserData = () => {
     localStorage.clear();
     setCheckinDate(null);
+    setCheckoutDate(null);
+    router.refresh();
   };
 
   return (
     <div className="space-y-5 bg-indigo-400">
       <div className="flex justify-center items-center my-8">
-        <h1 className="p-5 text-lg font-bold text-white">
-          Checkin and Checkout
-        </h1>
+        <h1 className="p-5 text-lg font-bold text-white">My Schedule</h1>
       </div>
       <div className="flex justify-center space-x-5 ">
-        <DatePicker
-          showIcon
-          isClearable
-          selected={checkinDate}
-          placeholderText="checkin date"
-          onChange={(date) => setCheckinDate(date)}
-          className="border-2 border-black rounded w-full"
-        />
-        <DatePicker
-          showIcon
-          isClearable
-          selected={checkoutDate}
-          placeholderText="checkout date"
-          onChange={(date) => setCheckoutDate(date)}
-          className="border-2 border-black rounded w-full"
-        />
+        <div className="flex flex-col">
+          <h2 className="text-white">Checkin date:</h2>
+          <DatePicker
+            showIcon
+            selectsStart
+            selected={checkinDate}
+            startDate={checkinDate || undefined}
+            endDate={checkoutDate || undefined}
+            minDate={currentDate || undefined}
+            placeholderText="checkin date"
+            onChange={(date) => setCheckinDate(date)}
+            className="border-2 border-black rounded w-full"
+          />
+        </div>
+        <div className="flex flex-col">
+          <h2 className="text-white">Checkout date:</h2>
+          <DatePicker
+            showIcon
+            selectsEnd
+            selected={checkoutDate}
+            startDate={checkinDate || undefined}
+            endDate={checkoutDate || undefined}
+            minDate={checkinDate || undefined}
+            placeholderText="checkout date"
+            onChange={(date) => setCheckoutDate(date)}
+            className="border-2 border-black rounded w-full"
+          />
+        </div>
       </div>
       <div className="flex justify-center items-center">
         {getCheckin && getCheckout ? (
