@@ -27,7 +27,7 @@ const BannerSec = () => {
     : null;
   //the sessionStorage data is string, it should be Date | null
   const parsedCheckin = getUserSchedule
-    ? new Date(userSchedule.formatCheckoutDate)
+    ? new Date(userSchedule.formatCheckinDate)
     : null;
   const parsedCheckout = getUserSchedule
     ? new Date(userSchedule.formatCheckoutDate)
@@ -74,6 +74,8 @@ const BannerSec = () => {
   if (checkinDate && checkoutDate && !getUserSchedule) {
     setUserData(checkinDate, checkoutDate);
   }
+
+  console.log("cc", checkinDate)
 
   return (
     <div className="container h-[500px]">
