@@ -13,14 +13,20 @@ const DatePickerPage = () => {
 
   const router = useRouter();
 
-  const getCheckin = localStorage.getItem("checkin");
-  const getCheckout = localStorage.getItem("checkout");
+  const getUserSchedule = sessionStorage.getItem("user-schedule");
+
+  type UserScheduleProps = {
+    formatCheckinDate: string;
+    formatCheckoutDate: string;
+  }
+  const userSchedule: UserScheduleProps = getUserSchedule ? JSON.parse(getUserSchedule) : null
+  //the sessionStorage data is string, it should be Date | null
+  const parsedCheckin = getUserSchedule ? new Date(userSchedule.formatCheckoutDate) : null;
+  const parsedCheckout = getUserSchedule ? new Date(userSchedule.formatCheckoutDate) : null;
 
   useEffect(() => {
     const setUserData = () => {
-      //the localStorage data is string, it should be Date | null
-      const parsedCheckin = getCheckin ? new Date(getCheckin) : null;
-      const parsedCheckout = getCheckout ? new Date(getCheckout) : null;
+      console.log(parsedCheckin)
       if (parsedCheckin && parsedCheckout) {
         setCheckinDate(parsedCheckin);
         setCheckoutDate(parsedCheckout);
@@ -28,7 +34,7 @@ const DatePickerPage = () => {
     };
     setUserData();
   }, []);
-  
+
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {
       const formatCheckinDate = checkinDate.toLocaleString("en-US", {
@@ -41,22 +47,18 @@ const DatePickerPage = () => {
         day: "numeric",
         year: "numeric",
       });
-      const data = { formatCheckinDate, formatCheckoutDate };
-      const response = await axios.post("/api/auth/user", data);
-      if (response.status === 200) {
-        const responseData = response.data.data;
-        localStorage.setItem("checkin", responseData.formatCheckinDate);
-        localStorage.setItem("checkout", responseData.formatCheckoutDate);
-        toast.success("User data saved successfully");
-        router.refresh();
-      }
+      const data = { formatCheckinDate, formatCheckoutDate }
+      sessionStorage.setItem("user-schedule", JSON.stringify(data));
+      // sessionStorage.setItem("checkout", formatCheckoutDate);
+      toast.success("User data saved successfully");
+      router.refresh();
     } catch (error) {
       toast.error("Something went wrong");
     }
   };
 
   const deleteUserData = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     setCheckinDate(null);
     setCheckoutDate(null);
     router.refresh();
@@ -98,7 +100,7 @@ const DatePickerPage = () => {
         </div>
       </div>
       <div className="flex justify-center items-center">
-        {getCheckin && getCheckout ? (
+        {getUserSchedule ? (
           <button
             onClick={deleteUserData}
             className="px-3 p-1 mb-5 rounded bg-slate-100"

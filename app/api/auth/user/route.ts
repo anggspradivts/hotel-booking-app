@@ -88,7 +88,7 @@ export async function POST(
       return NextResponse.json({ message: "No checkin or checkout date provided" }, { status: 404 })
     }
 
-    return NextResponse.json({ message: "Success save user date information on local storage", data }, { status: 200 })
+    return NextResponse.json({ message: "Success", data }, { status: 200 })
   } catch (error) {
     console.log("[ERR_SET_USER_DATE]", error);
     throw new Error("Internal server error")

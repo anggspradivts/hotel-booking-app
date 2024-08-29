@@ -1,6 +1,8 @@
 "use client";
 import axios from "axios";
+import { Brush, BrushIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { format } from "path";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -13,17 +15,29 @@ const BannerSec = () => {
 
   const router = useRouter();
 
-  const getCheckin = localStorage.getItem("checkin");
-  const getCheckout = localStorage.getItem("checkout");
+  //get session storage
+  const getUserSchedule = sessionStorage.getItem("user-schedule");
+
+  type UserScheduleProps = {
+    formatCheckinDate: string;
+    formatCheckoutDate: string;
+  };
+  const userSchedule: UserScheduleProps = getUserSchedule
+    ? JSON.parse(getUserSchedule)
+    : null;
+  //the sessionStorage data is string, it should be Date | null
+  const parsedCheckin = getUserSchedule
+    ? new Date(userSchedule.formatCheckoutDate)
+    : null;
+  const parsedCheckout = getUserSchedule
+    ? new Date(userSchedule.formatCheckoutDate)
+    : null;
 
   useEffect(() => {
     const setUserData = () => {
-      //the localStorage data is string, it should be Date | null
-      const parsedChekin = getCheckin ? new Date(getCheckin) : null;
-      const parsedChekout = getCheckout ? new Date(getCheckout) : null;
-      if (parsedChekin && parsedChekout) {
-        setCheckinDate(parsedChekin);
-        setCheckoutDate(parsedChekout);
+      if (parsedCheckin && parsedCheckout) {
+        setCheckinDate(parsedCheckin);
+        setCheckoutDate(parsedCheckout);
       }
     };
     setUserData();
@@ -42,18 +56,24 @@ const BannerSec = () => {
         year: "numeric",
       });
       const data = { formatCheckinDate, formatCheckoutDate };
-      const response = await axios.post("/api/auth/user", data);
-      if (response.status === 200) {
-        const responseData = response.data.data;
-        localStorage.setItem("checkin", responseData.formatCheckinDate);
-        localStorage.setItem("checkout", responseData.formatCheckoutDate);
-        toast.success("User data saved successfully");
-        router.refresh();
-      }
+      sessionStorage.setItem("user-schedule", JSON.stringify(data));
+      toast.success("User data saved successfully");
+      router.refresh();
     } catch (error) {
       toast.error("Something went wrong");
     }
   };
+
+  const deleteUserData = () => {
+    sessionStorage.clear();
+    setCheckinDate(null);
+    setCheckoutDate(null);
+    router.refresh();
+  };
+
+  if (checkinDate && checkoutDate && !getUserSchedule) {
+    setUserData(checkinDate, checkoutDate);
+  }
 
   return (
     <div className="container h-[500px]">
@@ -65,7 +85,7 @@ const BannerSec = () => {
         }}
         className="h-full w-full"
       >
-        <div className="w-full h-full space-y-3 flex flex-col justify-center items-center">
+        <div className="w-full h-full space-y-3 flex flex-col justify-center items-center bg-black bg-opacity-20">
           <p className="text-3xl text-white font-semibold">
             The best accomodation you can find
           </p>
@@ -98,6 +118,17 @@ const BannerSec = () => {
                 className="border-2 border-black rounded w-full"
               />
             </div>
+            {checkinDate && checkoutDate && getUserSchedule && (
+              <div className="">
+                <div className="h-1/2"></div>
+                <div
+                  className="h-1/2 bg-white rounded p-1 flex justify-center"
+                  onClick={deleteUserData}
+                >
+                  <X className="" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
