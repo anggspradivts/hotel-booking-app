@@ -16,18 +16,26 @@ const DatePickerPage = () => {
   const getUserSchedule = sessionStorage.getItem("user-schedule");
 
   type UserScheduleProps = {
-    formatCheckinDate: string;
-    formatCheckoutDate: string;
-  }
-  const userSchedule: UserScheduleProps = getUserSchedule ? JSON.parse(getUserSchedule) : null
+    checkinDate: string;
+    checkoutDate: string;
+  };
+  const userSchedule: UserScheduleProps = getUserSchedule
+    ? JSON.parse(getUserSchedule)
+    : null;
   //the sessionStorage data is string, it should be Date | null
-  const parsedCheckin = getUserSchedule ? new Date(userSchedule.formatCheckoutDate) : null;
-  const parsedCheckout = getUserSchedule ? new Date(userSchedule.formatCheckoutDate) : null;
+  const parsedCheckin = getUserSchedule
+    ? new Date(userSchedule.checkinDate)
+    : null;
+  const parsedCheckout = getUserSchedule
+    ? new Date(userSchedule.checkoutDate)
+    : null;
+
+  console.log(parsedCheckin?.getTime());
+  console.log("ppp", userSchedule)
 
   useEffect(() => {
     const setUserData = () => {
-      console.log(parsedCheckin)
-      if (parsedCheckin && parsedCheckout) {
+      if (parsedCheckin && !isNaN(parsedCheckin.getTime()) && parsedCheckout && !isNaN(parsedCheckout.getTime())) {
         setCheckinDate(parsedCheckin);
         setCheckoutDate(parsedCheckout);
       }
@@ -47,9 +55,8 @@ const DatePickerPage = () => {
         day: "numeric",
         year: "numeric",
       });
-      const data = { formatCheckinDate, formatCheckoutDate }
+      const data = { checkinDate, checkoutDate };
       sessionStorage.setItem("user-schedule", JSON.stringify(data));
-      // sessionStorage.setItem("checkout", formatCheckoutDate);
       toast.success("User data saved successfully");
       router.refresh();
     } catch (error) {
@@ -63,6 +70,8 @@ const DatePickerPage = () => {
     setCheckoutDate(null);
     router.refresh();
   };
+
+  console.log(checkinDate)
 
   return (
     <div className="space-y-5 bg-indigo-400">
@@ -103,7 +112,7 @@ const DatePickerPage = () => {
         {getUserSchedule ? (
           <button
             onClick={deleteUserData}
-            className="px-3 p-1 mb-5 rounded bg-slate-100"
+            className="px-3 p-1 mb-5 rounded bg-slate-100 border-2 border-black"
           >
             Clear
           </button>

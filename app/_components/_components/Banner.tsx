@@ -19,18 +19,18 @@ const BannerSec = () => {
   const getUserSchedule = sessionStorage.getItem("user-schedule");
 
   type UserScheduleProps = {
-    formatCheckinDate: string;
-    formatCheckoutDate: string;
+    checkinDate: string;
+    checkoutDate: string;
   };
   const userSchedule: UserScheduleProps = getUserSchedule
     ? JSON.parse(getUserSchedule)
     : null;
   //the sessionStorage data is string, it should be Date | null
   const parsedCheckin = getUserSchedule
-    ? new Date(userSchedule.formatCheckinDate)
+    ? new Date(userSchedule.checkinDate)
     : null;
   const parsedCheckout = getUserSchedule
-    ? new Date(userSchedule.formatCheckoutDate)
+    ? new Date(userSchedule.checkoutDate)
     : null;
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const BannerSec = () => {
         day: "numeric",
         year: "numeric",
       });
-      const data = { formatCheckinDate, formatCheckoutDate };
+      const data = { checkinDate, checkoutDate };
       sessionStorage.setItem("user-schedule", JSON.stringify(data));
       toast.success("User data saved successfully");
       router.refresh();
