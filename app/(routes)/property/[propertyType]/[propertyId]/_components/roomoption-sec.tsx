@@ -1,3 +1,4 @@
+"use client";
 import {
   BedTypes,
   Property,
@@ -5,6 +6,8 @@ import {
   RoomTypes,
   RoomTypesFacilities,
 } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface RoomOptionSecProps {
   property: Property & {
@@ -17,6 +20,16 @@ interface RoomOptionSecProps {
   };
 }
 const RoomOptionSec = ({ property }: RoomOptionSecProps) => {
+  const router = useRouter();
+
+  const handleReserve = async (propertyId: string, roomId: string) => {
+    try {
+      router.push(`/book/${propertyId}?roomId=${roomId}`);
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <div>
       <div className="flex my-10 py-5 border-b border-slate-300">
@@ -42,8 +55,11 @@ const RoomOptionSec = ({ property }: RoomOptionSecProps) => {
                   </div>
                   <div className="border border-black">
                     <div className="flex flex-col space-y-2 justify-center items-center p-5">
-                      <p>{roomType.price?.toNumber()}$ per night</p>
-                      <button className="bg-indigo-400 text-white p-1 px-3">
+                      <p>{roomType.price?.toString()}$ per night</p>
+                      <button
+                        onClick={() => handleReserve(property.id, roomType.id)}
+                        className="bg-indigo-400 text-white p-1 px-3"
+                      >
                         Reserve
                       </button>
                     </div>

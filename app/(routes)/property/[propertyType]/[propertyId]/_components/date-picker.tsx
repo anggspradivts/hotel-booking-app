@@ -30,9 +30,6 @@ const DatePickerPage = () => {
     ? new Date(userSchedule.checkoutDate)
     : null;
 
-  console.log(parsedCheckin?.getTime());
-  console.log("ppp", userSchedule)
-
   useEffect(() => {
     const setUserData = () => {
       if (parsedCheckin && !isNaN(parsedCheckin.getTime()) && parsedCheckout && !isNaN(parsedCheckout.getTime())) {
@@ -70,8 +67,6 @@ const DatePickerPage = () => {
     setCheckoutDate(null);
     router.refresh();
   };
-
-  console.log(checkinDate)
 
   return (
     <div className="space-y-5 bg-indigo-400">
