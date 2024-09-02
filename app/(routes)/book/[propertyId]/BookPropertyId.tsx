@@ -8,18 +8,22 @@ import {
   RoomTypesFacilities,
 } from "@prisma/client";
 import UsernameFormPage from "./_components/booked-information";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import clsx from "clsx";
-import SubmitFormBtn from "@/components/submit-form-btn";
 import BookedInformationPage from "./_components/booked-information";
 import { useSearchParams } from "next/navigation";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css"; // Import the CSS for the component
+import { useState } from "react";
+import input from "@/components/form-inputs/Input";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "Please fill in your first name"),
   lastName: z.string().min(1, "Please fill in your first name"),
+  fullname: z.string().min(1, "Please fill in your first name"),
   email: z.string().min(1, "Please fill in your email address"),
   phonenumber: z.string().min(1, "Please fill in your phone number"),
 });
@@ -36,6 +40,7 @@ interface BookPropertyIdPageProps {
   };
 }
 const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
+  const [phone, setPhone] = useState("");
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
   if (!roomId) {
@@ -46,6 +51,7 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
     defaultValues: {
       firstName: "",
       lastName: "",
+      fullname: "",
       email: "",
       phonenumber: "",
     },
@@ -53,7 +59,10 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
   const {
     register,
     getValues,
+    setValue,
     handleSubmit,
+    watch,
+    control,
     formState: { errors },
   } = form;
 
@@ -79,7 +88,7 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
         <form className="space-y-4" {...form} onSubmit={handleSubmit(onSubmit)}>
           <div className="flex space-x-5">
             <div className="flex flex-col w-full">
-              <label htmlFor="username">Name</label>
+              <label htmlFor="username">First Name</label>
               <input
                 {...register("firstName")}
                 type="text"
@@ -96,7 +105,7 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
               )}
             </div>
             <div className="flex flex-col w-full">
-              <label htmlFor="username">Name</label>
+              <label htmlFor="username">Last Name</label>
               <input
                 {...register("lastName")}
                 type="text"
@@ -131,24 +140,55 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
             )}
           </div>
           <div className="flex flex-col">
-            <label htmlFor="phonenumber">Phone Number</label>
-            <input
-              {...register("phonenumber")}
-              type="tel"
-              defaultValue={getValues("phonenumber")}
-              placeholder="your phone number"
-              className={clsx(
-                "w-1/2 px-3 py-2",
-                "border border-slate-300 rounded-lg",
-                { "border-red-500": errors.phonenumber }
+            <label>Phone Number</label>
+            <Controller
+              name="phonenumber"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  country="id"
+                  value={field.value}
+                  placeholder="Enter your phone number"
+                  onChange={(phone) => {
+                    field.onChange(phone); // Update react-hook-form state
+                    setValue("phonenumber", phone); // Ensure form state is updated
+                  }}
+                />
               )}
             />
             {errors.phonenumber && (
               <span className="text-red-500">{errors.phonenumber.message}</span>
             )}
           </div>
+          <div className="flex flex-col">
+            <label>Full Name</label>
+            <Controller
+              name="phonenumber"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="text"
+                  placeholder="Your full name"
+                  {...register("fullname")}
+                  className={clsx(
+                    "w-1/2 px-3 py-2",
+                    "border border-slate-300 rounded-lg",
+                    { "border-red-500": errors.email }
+                  )}
+                />
+              )}
+            />
+            {errors.fullname && (
+              <span className="text-red-500">{errors.fullname.message}</span>
+            )}
+          </div>
           <div>
-            <SubmitFormBtn />
+            <button
+              className="p-2 bg-indigo-400 rounded text-white"
+              type="submit"
+            >
+              Submit
+            </button>
           </div>
         </form>
       </div>

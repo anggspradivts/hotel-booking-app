@@ -67,7 +67,7 @@ const BookedInformationPage = ({
     roomType.find((room) => room.id === roomId)
   );
   const bookedRoom = findRoomType ? findRoomType[0] : null;
-  const roomPrice = bookedRoom?.price?.toString()
+  const roomPrice = bookedRoom?.price?.toString();
   const totalCost = differenceInDays
     ? parseFloat(roomPrice ? roomPrice : "0") * differenceInDays
     : null;
@@ -85,16 +85,24 @@ const BookedInformationPage = ({
         <div id="user-schedule" className="flex">
           <div className="flex flex-col border-r-2 border-slate-300 pr-3">
             <p className="text-lg font-semibold">Check-in:</p>{" "}
-            <p>{formattedCheckin}</p>
+            <p>
+              {formattedCheckin ? formattedCheckin : "No information provided"}
+            </p>
           </div>
           <div className="flex flex-col border-l-2 border-slate-300 pl-3">
             <p className="text-lg font-semibold">Check-out:</p>{" "}
-            <p>{formattedCheckout}</p>
+            <p>
+              {formattedCheckout
+                ? formattedCheckout
+                : "No information provided"}
+            </p>
           </div>
         </div>
         <div className="italic mt-3">
-          <span className="font-semibold">{differenceInDays} nights</span> of
-          stayed in
+          <span className="font-semibold">
+            {differenceInDays ? differenceInDays : "0"} nights
+          </span>{" "}
+          of stayed in
         </div>
       </div>
       <div className="border border-indigo-100 rounded p-4">
@@ -120,7 +128,7 @@ const BookedInformationPage = ({
       </div>
       <div className="border border-indigo-100 rounded p-4">
         <h1 className="text-lg font-semibold">Total Cost</h1>
-        <p>original price {totalCost}$</p>
+        <p>original price {totalCost ? totalCost : "0"}$</p>
       </div>
     </div>
   );
