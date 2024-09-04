@@ -42,20 +42,14 @@ const DatePickerPage = () => {
 
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {
-      const formatCheckinDate = checkinDate.toLocaleString("en-US", {
-        month: "numeric",
-        day: "numeric",
-        year: "numeric",
-      });
-      const formatCheckoutDate = checkoutDate.toLocaleString("en-US", {
-        month: "numeric",
-        day: "numeric",
-        year: "numeric",
-      });
-      const data = { checkinDate, checkoutDate };
-      sessionStorage.setItem("user-schedule", JSON.stringify(data));
-      toast.success("User data saved successfully");
-      router.refresh();
+      if (!checkinDate || !checkoutDate) {
+        toast.error("Both checkin and checkout date have to be filled")
+      } else {
+        const data = { checkinDate, checkoutDate };
+        sessionStorage.setItem("user-schedule", JSON.stringify(data));
+        toast.success("Your schedule saved successfully");
+        router.refresh();
+      }
     } catch (error) {
       toast.error("Something went wrong");
     }

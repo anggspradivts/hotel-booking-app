@@ -7,23 +7,22 @@ import {
   RoomTypes,
   RoomTypesFacilities,
 } from "@prisma/client";
-import UsernameFormPage from "./_components/booked-information";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import clsx from "clsx";
 import BookedInformationPage from "./_components/booked-information";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // Import the CSS for the component
 import { useState } from "react";
-import input from "@/components/form-inputs/Input";
+import axios from "axios";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "Please fill in your first name"),
-  lastName: z.string().min(1, "Please fill in your first name"),
-  fullname: z.string().min(1, "Please fill in your first name"),
+  lastName: z.string().min(1, "Please fill in your last name"),
+  fullname: z.string().min(1, "Please fill in your full name"),
   email: z.string().min(1, "Please fill in your email address"),
   phonenumber: z.string().min(1, "Please fill in your phone number"),
 });
@@ -41,11 +40,62 @@ interface BookPropertyIdPageProps {
 }
 const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
   const [phone, setPhone] = useState("");
+  const router = useRouter();
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
   if (!roomId) {
     return null;
   }
+
+  const getUserSchedule = sessionStorage.getItem("user-schedule");
+  if (!getUserSchedule) {
+    router.push(`/property/${property.PropertyType}/${property.id}`)
+  }
+  type UserScheduleProps = {
+    checkinDate: string;
+    checkoutDate: string;
+  };
+  const userSchedule: UserScheduleProps = getUserSchedule
+    ? JSON.parse(getUserSchedule)
+    : null;
+  const getCheckin = userSchedule ? userSchedule.checkinDate : null;
+  const getCheckout = userSchedule ? userSchedule.checkoutDate : null;
+
+  const checkin = getCheckin ? new Date(getCheckin) : null;
+  const checkout = getCheckout ? new Date(getCheckout) : null;
+
+  // Calculate the difference in time (milliseconds)
+  const differenceInTime =
+    checkin && checkout ? checkout.getTime() - checkin.getTime() : null;
+
+  // Convert the difference from milliseconds to days
+  const differenceInDays = differenceInTime
+    ? differenceInTime / (1000 * 3600 * 24)
+    : null;
+
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const formattedCheckin = checkin
+    ? new Intl.DateTimeFormat("en-US", options).format(checkin)
+    : null;
+  const formattedCheckout = checkout
+    ? new Intl.DateTimeFormat("en-US", options).format(checkout)
+    : null;
+
+    const mapRoomTypes = property.RoomOption.map((roomOpt) => roomOpt.RoomTypes);
+    const findRoomType = mapRoomTypes.find((roomType) =>
+      roomType.find((room) => room.id === roomId)
+    );
+    const bookedRoom = findRoomType ? findRoomType[0] : null;
+    const roomPrice = bookedRoom?.price ? bookedRoom.price.toString() : "0";
+    const totalCost = differenceInDays
+      ? parseFloat(roomPrice) * differenceInDays
+      : null;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,6 +106,7 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
       phonenumber: "",
     },
   });
+
   const {
     register,
     getValues,
@@ -68,20 +119,35 @@ const BookPropertyIdPage = ({ property }: BookPropertyIdPageProps) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      console.log(data);
+      const completeData = {
+        ...data,
+        roomId,
+        checkin,
+        checkout,
+        totalCost,
+        totalDays: differenceInDays,
+        propertyId: property.id,
+      };
+      const res = await axios.post("/api/book", completeData);
+      
     } catch (error) {
       toast.error("Something went wrong");
     }
   };
+
   return (
     <div className="grid md:grid-cols-2 gap-3">
       <div>
-        <BookedInformationPage property={property} roomId={roomId} />
+        <BookedInformationPage
+          property={property}
+          getCheckin={getCheckin}
+          getCheckout={getCheckout}
+          formattedCheckin={formattedCheckin}
+          formattedCheckout={formattedCheckout}
+          differenceInDays={differenceInDays}
+        />
       </div>
-      <div
-        id="user-information-form"
-        className="flex flex-col space-y-4 p-4 border border-indigo-100 rounded"
-      >
+      <div className="flex flex-col space-y-4 p-4 border border-indigo-100 rounded">
         <div className="flex justify-center items-center p-4 bg-indigo-100 rounded border-2 border-indigo-100">
           <p>Please fill the form</p>
         </div>

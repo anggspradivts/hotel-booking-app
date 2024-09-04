@@ -21,10 +21,15 @@ interface RoomOptionSecProps {
 }
 const RoomOptionSec = ({ property }: RoomOptionSecProps) => {
   const router = useRouter();
+  const getUserSchedule = sessionStorage.getItem("user-schedule");
 
   const handleReserve = async (propertyId: string, roomId: string) => {
     try {
-      router.push(`/book/${propertyId}?roomId=${roomId}`);
+      if (!getUserSchedule) {
+        toast.error("Please select check-in and check-out dates for your schedule");
+      } else {
+        router.push(`/book/${propertyId}?roomId=${roomId}`);
+      }
     } catch (error) {
       toast.error("Something went wrong");
     }

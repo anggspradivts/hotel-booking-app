@@ -7,7 +7,9 @@ import {
   RoomTypes,
   RoomTypesFacilities,
 } from "@prisma/client";
-import { Bed, BedSingle } from "lucide-react";
+import { BedSingle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 interface BookedInformationPageProps {
   property: Property & {
@@ -19,57 +21,38 @@ interface BookedInformationPageProps {
       })[];
     })[];
   };
-  roomId: string;
+  getCheckin: string | null;
+  getCheckout: string | null;
+  formattedCheckin: string | null;
+  formattedCheckout: string | null;
+  differenceInDays: number | null;
+  // bookedRoom: RoomTypes & { RoomFacilities: RoomTypesFacilities[], BedTypes: BedTypes[] };
 }
 const BookedInformationPage = ({
   property,
-  roomId,
+  getCheckin,
+  getCheckout,
+  formattedCheckin,
+  formattedCheckout,
+  differenceInDays,
 }: BookedInformationPageProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get("roomId");
+  if (!roomId) {
+    return null;
+  }
+
   const propertyLocation = property.LocationDetails[0];
-  const getUserSchedule = sessionStorage.getItem("user-schedule");
-  type UserScheduleProps = {
-    checkinDate: string;
-    checkoutDate: string;
-  };
-  const userSchedule: UserScheduleProps = getUserSchedule
-    ? JSON.parse(getUserSchedule)
-    : null;
-  const getCheckin = userSchedule ? userSchedule.checkinDate : null;
-  const getCheckout = userSchedule ? userSchedule.checkoutDate : null;
 
-  const checkin = getCheckin ? new Date(getCheckin) : null;
-  const checkout = getCheckout ? new Date(getCheckout) : null;
-
-  // Calculate the difference in time (milliseconds)
-  const differenceInTime =
-    checkin && checkout ? checkout.getTime() - checkin.getTime() : null;
-
-  // Convert the difference from milliseconds to days
-  const differenceInDays = differenceInTime
-    ? differenceInTime / (1000 * 3600 * 24)
-    : null;
-
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
-  const formattedCheckin = checkin
-    ? new Intl.DateTimeFormat("en-US", options).format(checkin)
-    : null;
-  const formattedCheckout = checkout
-    ? new Intl.DateTimeFormat("en-US", options).format(checkout)
-    : null;
-
-  const findRoomTypes = property.RoomOption.map((roomOpt) => roomOpt.RoomTypes);
-  const findRoomType = findRoomTypes.find((roomType) =>
+  const mapRoomTypes = property.RoomOption.map((roomOpt) => roomOpt.RoomTypes);
+  const findRoomType = mapRoomTypes.find((roomType) =>
     roomType.find((room) => room.id === roomId)
   );
   const bookedRoom = findRoomType ? findRoomType[0] : null;
-  const roomPrice = bookedRoom?.price?.toString();
+  const roomPrice = bookedRoom?.price ? bookedRoom.price.toString() : "0";
   const totalCost = differenceInDays
-    ? parseFloat(roomPrice ? roomPrice : "0") * differenceInDays
+    ? parseFloat(roomPrice) * differenceInDays
     : null;
 
   return (
@@ -123,6 +106,16 @@ const BookedInformationPage = ({
             <p className="italic">
               {bookedRoom?.BedTypes.map((bed) => bed.name)}
             </p>
+          </div>
+          <div>
+            <button
+              onClick={() =>
+                router.push(`/property/${property.PropertyType}/${property.id}`)
+              }
+              className="rounded hover:bg-white bg-indigo-100 p-2"
+            >
+              Change your selection
+            </button>
           </div>
         </div>
       </div>
