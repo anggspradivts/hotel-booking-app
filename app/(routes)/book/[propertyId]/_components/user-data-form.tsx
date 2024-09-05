@@ -1,4 +1,5 @@
 "use client";
+import LoadingButton from "@/components/loading-btn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BedTypes, Property, PropertyLocation, PropertyRoomOption, RoomTypes, RoomTypesFacilities } from "@prisma/client";
 import axios from "axios";
@@ -31,6 +32,7 @@ interface UserDataFormPageProps {
 }
 const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
   const [phone, setPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -93,6 +95,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
+      setIsLoading(true)
       const completeData = {
         ...data,
         roomId,
@@ -105,9 +108,12 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
       const res = await axios.post("/api/book", completeData);
       if (res.status === 200) {
         console.log(res.data);
+        router.push(`/book/${completeData.propertyId}/payment?paymentId=${res.data.createUserBookData.id}&roomId=${roomId}`)
       }
     } catch (error) {
       toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false)
     }
   };
   return (
@@ -119,10 +125,11 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
         <form className="space-y-4" {...form} onSubmit={handleSubmit(onSubmit)}>
           <div className="flex space-x-5">
             <div className="flex flex-col w-full">
-              <label htmlFor="username">First Name</label>
+              <label htmlFor="firstname">First Name</label>
               <input
                 {...register("firstName")}
                 type="text"
+                id="firstname"
                 defaultValue={getValues("firstName")}
                 placeholder="your first name..."
                 className={clsx(
@@ -136,10 +143,11 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
               )}
             </div>
             <div className="flex flex-col w-full">
-              <label htmlFor="username">Last Name</label>
+              <label htmlFor="lastname">Last Name</label>
               <input
                 {...register("lastName")}
                 type="text"
+                id="lastname"
                 defaultValue={getValues("lastName")}
                 placeholder="your last name..."
                 className={clsx(
@@ -158,6 +166,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
             <input
               {...register("email")}
               type="text"
+              id="useremail"
               defaultValue={getValues("email")}
               placeholder="your email"
               className={clsx(
@@ -171,7 +180,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
             )}
           </div>
           <div className="flex flex-col">
-            <label>Phone Number</label>
+            <label htmlFor="phonenumber">Phone Number</label>
             <Controller
               name="phoneNumber"
               control={control}
@@ -192,13 +201,14 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
             )}
           </div>
           <div className="flex flex-col">
-            <label>Full Name</label>
+            <label htmlFor="fullname">Full Name</label>
             <Controller
-              name="phoneNumber"
+              name="fullName"
               control={control}
               render={({ field }) => (
                 <input
                   type="text"
+                  id="fullname"
                   placeholder="Your full name"
                   {...register("fullName")}
                   className={clsx(
@@ -214,12 +224,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
             )}
           </div>
           <div>
-            <button
-              className="p-2 bg-indigo-400 rounded text-white"
-              type="submit"
-            >
-              Submit
-            </button>
+            <LoadingButton context={"Submit"} isLoading={isLoading}/>
           </div>
         </form>
       </div>

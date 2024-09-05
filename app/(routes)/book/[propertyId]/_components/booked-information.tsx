@@ -1,4 +1,5 @@
 "use client";
+import LoadingButton from "@/components/loading-btn";
 import {
   BedTypes,
   Property,
@@ -8,8 +9,9 @@ import {
   RoomTypesFacilities,
 } from "@prisma/client";
 import { BedSingle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface BookedInformationPageProps {
   property: Property & {
@@ -34,11 +36,12 @@ const BookedInformationPage = ({
   formattedCheckout,
   differenceInDays,
 }: BookedInformationPageProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
   if (!roomId) {
-    return null;
+    return <div>no room id</div>;
   }
 
   const propertyLocation = property.LocationDetails[0];
@@ -52,6 +55,17 @@ const BookedInformationPage = ({
   const totalCost = differenceInDays
     ? parseFloat(roomPrice) * differenceInDays
     : null;
+
+  const changeSelection = async () => {
+    try {
+      setIsLoading(true)
+      router.push(`/property/${property.PropertyType}/${property.id}`);
+    } catch (error) {
+      toast.error("Something went wrong")
+    } finally {
+      setIsLoading(false)
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-4">
@@ -106,14 +120,11 @@ const BookedInformationPage = ({
             </p>
           </div>
           <div>
-            <button
-              onClick={() =>
-                router.push(`/property/${property.PropertyType}/${property.id}`)
-              }
-              className="rounded hover:bg-white bg-indigo-100 p-2"
-            >
-              Change your selection
-            </button>
+            <LoadingButton
+              context="Change your selection"
+              handleClick={changeSelection}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>
