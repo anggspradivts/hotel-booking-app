@@ -193,7 +193,7 @@ model TempUserBookData {
   lastName String
   fullName String
   email String
-  phone String
+  phoneNumber String
 
   roomId String
   room_id RoomTypes? @relation(fields: [roomId], references: [id], onDelete: Cascade)

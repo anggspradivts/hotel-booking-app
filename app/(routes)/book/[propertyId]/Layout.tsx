@@ -7,12 +7,21 @@ import {
   RoomTypes,
   RoomTypesFacilities,
 } from "@prisma/client";
+import { z } from "zod";
 import BookedInformationPage from "./_components/booked-information";
 import { useRouter, useSearchParams } from "next/navigation";
 import "react-phone-input-2/lib/style.css"; // Import the CSS for the component
 import React from "react";
 
-interface BookPropertyIdPageProps {
+const formSchema = z.object({
+  firstName: z.string().min(1, "Please fill in your first name"),
+  lastName: z.string().min(1, "Please fill in your last name"),
+  fullName: z.string().min(1, "Please fill in your full name"),
+  email: z.string().min(1, "Please fill in your email address"),
+  phoneNumber: z.string().min(1, "Please fill in your phone number"),
+});
+
+interface BookPropertyIdPageLayoutProps {
   property: Property & {
     LocationDetails: PropertyLocation[];
     RoomOption: (PropertyRoomOption & {
@@ -24,10 +33,10 @@ interface BookPropertyIdPageProps {
   };
   children: React.ReactNode;
 }
-const BookPropertyIdPage = ({
+const BookPropertyIdPageLayout = ({
   property,
   children,
-}: BookPropertyIdPageProps) => {
+}: BookPropertyIdPageLayoutProps) => {
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -49,8 +58,9 @@ const BookPropertyIdPage = ({
     : null;
   const getCheckin = userSchedule ? userSchedule.checkinDate : null;
   const getCheckout = userSchedule ? userSchedule.checkoutDate : null;
-  const checkin = userSchedule ? new Date(userSchedule.checkinDate) : null;
-  const checkout = userSchedule ? new Date(userSchedule.checkoutDate) : null;
+
+  const checkin = getCheckin ? new Date(getCheckin) : null;
+  const checkout = getCheckout ? new Date(getCheckout) : null;
 
   // Calculate the difference in time (milliseconds)
   const differenceInTime =
@@ -83,7 +93,7 @@ const BookPropertyIdPage = ({
     }
 
     return child;
-  });
+  }); 
 
   return (
     <div className="grid md:grid-cols-2 gap-3">
@@ -104,4 +114,4 @@ const BookPropertyIdPage = ({
   );
 };
 
-export default BookPropertyIdPage;
+export default BookPropertyIdPageLayout;

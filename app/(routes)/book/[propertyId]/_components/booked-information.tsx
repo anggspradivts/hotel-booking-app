@@ -30,8 +30,6 @@ interface BookedInformationPageProps {
 }
 const BookedInformationPage = ({
   property,
-  getCheckin,
-  getCheckout,
   formattedCheckin,
   formattedCheckout,
   differenceInDays,
