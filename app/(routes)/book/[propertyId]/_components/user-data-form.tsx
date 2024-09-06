@@ -96,19 +96,17 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true)
-      const completeData = {
+      const orderData = {
         ...data,
-        roomId,
         checkin,
         checkout,
-        totalCost,
-        totalDays: differenceInDays,
+        roomId,
         propertyId: property.id,
       };
-      const res = await axios.post("/api/book", completeData);
+      const res = await axios.post("/api/book/payment", orderData);
       if (res.status === 200) {
         console.log(res.data);
-        router.push(`/book/${completeData.propertyId}/payment?paymentId=${res.data.createUserBookData.id}&roomId=${roomId}`)
+        router.push(res.data.transaction.redirect_url)
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -224,7 +222,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
             )}
           </div>
           <div>
-            <LoadingButton context={"Submit"} isLoading={isLoading}/>
+            <LoadingButton context={"Next to payment"} isLoading={isLoading}/>
           </div>
         </form>
       </div>

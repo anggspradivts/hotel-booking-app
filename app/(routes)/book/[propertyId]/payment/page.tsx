@@ -4,7 +4,6 @@ import PaymentSectionPage from "./_components/payment-section";
 
 interface PaymentPageProps {
   params: { propertyId: string };
-  children: React.ReactNode;
 }
 const PaymentPage = async ({ params }: PaymentPageProps) => {
   const property = await db.property.findUnique({
