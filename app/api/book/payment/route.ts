@@ -31,35 +31,53 @@ export async function POST(
     const generateOrderId = uuidv4();
     const midtransClient = require("midtrans-client")
 
-    let snap = new midtransClient.Snap({
-      // Set to true if you want Production Environment (accept real transaction).
+    // let snap = new midtransClient.Snap({
+    //   // Set to true if you want Production Environment (accept real transaction).
+    //   isProduction : false,
+    //   serverKey : process.env.MIDTRANS_SERVER_KEY,
+    // });
+    let core = new midtransClient.CoreApi({
       isProduction : false,
-      serverKey : process.env.MIDTRANS_SERVER_KEY
+      serverKey : process.env.MIDTRANS_SERVER_KEY,
+      clientKey : process.env.MIDTRANS_CLIENT_KEY
     });
 
-    let parameter = {
-      "transaction_details": {
-          "order_id": generateOrderId,
-          "gross_amount": totalCost
-      },
-      "credit_card":{
-          "secure" : true
-      },
-      "property_details": {
-        "id": propertyId,
-        "property_name": findProperty.name
-      },
-      "customer_details": {
-          "first_name": orderData.firstName,
-          "last_name": orderData.lastName,
-          "email": orderData.email,
-          "phone": orderData.phoneNumber
-      }
-    };
+    // let parameter = {
+    //   "transaction_details": {
+    //       "order_id": generateOrderId,
+    //       "gross_amount": totalCost
+    //   },
+    //   "credit_card":{
+    //       "secure" : true
+    //   },
+    //   "property_details": {
+    //     "id": propertyId,
+    //     "property_name": findProperty.name
+    //   },
+    //   "customer_details": {
+    //       "first_name": orderData.firstName,
+    //       "last_name": orderData.lastName,
+    //       "email": orderData.email,
+    //       "phone": orderData.phoneNumber
+    //   }
+    // };
 
-    const transaction = await snap.createTransaction(parameter);
-    const response = NextResponse.json({ message: "Success", transaction }, { status: 200 })
-    return response;
+    let parameter = {
+      "payment_type": "gopay",
+      "transaction_details": {
+          "gross_amount": totalCost,
+          "order_id": generateOrderId,
+      },
+      "gopay": {
+          "enable_callback": true,                // optional
+          "callback_url": "someapps://callback"   // optional
+      }
+    }
+  
+    const transaction = await core.createTransaction(parameter);
+    console.log("transs", transaction);
+    // const response = NextResponse.json({ message: "Success", transaction }, { status: 200 })
+    // return response;
   } catch (error) {
     console.log("[ERR_PAYMENT_SERVER]", error);
     throw new Error("Internal server error")

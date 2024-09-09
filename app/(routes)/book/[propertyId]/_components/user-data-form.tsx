@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import { z } from "zod";
+import BookPropertyIdPageLayout from "../Layout";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "Please fill in your first name"),
@@ -106,7 +107,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
       const res = await axios.post("/api/book/payment", orderData);
       if (res.status === 200) {
         console.log(res.data);
-        router.push(res.data.transaction.redirect_url)
+        // router.push(res.data.transaction.redirect_url)
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -115,118 +116,120 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
     }
   };
   return (
-    <div>
-      <div className="flex flex-col space-y-4 p-4 border border-indigo-100 rounded">
-        <div className="flex justify-center items-center p-4 bg-indigo-100 rounded border-2 border-indigo-100">
-          <p>Please fill the form</p>
-        </div>
-        <form className="space-y-4" {...form} onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex space-x-5">
-            <div className="flex flex-col w-full">
-              <label htmlFor="firstname">First Name</label>
-              <input
-                {...register("firstName")}
-                type="text"
-                id="firstname"
-                defaultValue={getValues("firstName")}
-                placeholder="your first name..."
-                className={clsx(
-                  "w-full px-3 py-2",
-                  "border border-slate-300 rounded-lg",
-                  { "border-red-500": errors.firstName }
-                )}
-              />
-              {errors.firstName && (
-                <span className="text-red-500">{errors.firstName.message}</span>
-              )}
-            </div>
-            <div className="flex flex-col w-full">
-              <label htmlFor="lastname">Last Name</label>
-              <input
-                {...register("lastName")}
-                type="text"
-                id="lastname"
-                defaultValue={getValues("lastName")}
-                placeholder="your last name..."
-                className={clsx(
-                  "w-full px-3 py-2",
-                  "border border-slate-300 rounded-lg",
-                  { "border-red-500": errors.lastName }
-                )}
-              />
-              {errors.lastName && (
-                <span className="text-red-500">{errors.lastName.message}</span>
-              )}
-            </div>
+    <BookPropertyIdPageLayout property={property}>
+      <div>
+        <div className="flex flex-col space-y-4 p-4 border border-indigo-100 rounded">
+          <div className="flex justify-center items-center p-4 bg-indigo-100 rounded border-2 border-indigo-100">
+            <p>Please fill the form</p>
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="useremail">Email Address</label>
-            <input
-              {...register("email")}
-              type="text"
-              id="useremail"
-              defaultValue={getValues("email")}
-              placeholder="your email"
-              className={clsx(
-                "w-1/2 px-3 py-2",
-                "border border-slate-300 rounded-lg",
-                { "border-red-500": errors.email }
-              )}
-            />
-            {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span>
-            )}
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="phonenumber">Phone Number</label>
-            <Controller
-              name="phoneNumber"
-              control={control}
-              render={({ field }) => (
-                <PhoneInput
-                  country="id"
-                  value={field.value}
-                  placeholder="Enter your phone number"
-                  onChange={(phone) => {
-                    field.onChange(phone); // Update react-hook-form state
-                    setValue("phoneNumber", phone); // Ensure form state is updated
-                  }}
-                />
-              )}
-            />
-            {errors.phoneNumber && (
-              <span className="text-red-500">{errors.phoneNumber.message}</span>
-            )}
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="fullname">Full Name</label>
-            <Controller
-              name="fullName"
-              control={control}
-              render={({ field }) => (
+          <form className="space-y-4" {...form} onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex space-x-5">
+              <div className="flex flex-col w-full">
+                <label htmlFor="firstname">First Name</label>
                 <input
+                  {...register("firstName")}
                   type="text"
-                  id="fullname"
-                  placeholder="Your full name"
-                  {...register("fullName")}
+                  id="firstname"
+                  defaultValue={getValues("firstName")}
+                  placeholder="your first name..."
                   className={clsx(
-                    "w-1/2 px-3 py-2",
+                    "w-full px-3 py-2",
                     "border border-slate-300 rounded-lg",
-                    { "border-red-500": errors.email }
+                    { "border-red-500": errors.firstName }
                   )}
                 />
+                {errors.firstName && (
+                  <span className="text-red-500">{errors.firstName.message}</span>
+                )}
+              </div>
+              <div className="flex flex-col w-full">
+                <label htmlFor="lastname">Last Name</label>
+                <input
+                  {...register("lastName")}
+                  type="text"
+                  id="lastname"
+                  defaultValue={getValues("lastName")}
+                  placeholder="your last name..."
+                  className={clsx(
+                    "w-full px-3 py-2",
+                    "border border-slate-300 rounded-lg",
+                    { "border-red-500": errors.lastName }
+                  )}
+                />
+                {errors.lastName && (
+                  <span className="text-red-500">{errors.lastName.message}</span>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="useremail">Email Address</label>
+              <input
+                {...register("email")}
+                type="text"
+                id="useremail"
+                defaultValue={getValues("email")}
+                placeholder="your email"
+                className={clsx(
+                  "w-1/2 px-3 py-2",
+                  "border border-slate-300 rounded-lg",
+                  { "border-red-500": errors.email }
+                )}
+              />
+              {errors.email && (
+                <span className="text-red-500">{errors.email.message}</span>
               )}
-            />
-            {errors.fullName && (
-              <span className="text-red-500">{errors.fullName.message}</span>
-            )}
-          </div>
-          <div>
-            <LoadingButton context={"Next to payment"} isLoading={isLoading}/>
-          </div>
-        </form>
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="phonenumber">Phone Number</label>
+              <Controller
+                name="phoneNumber"
+                control={control}
+                render={({ field }) => (
+                  <PhoneInput
+                    country="id"
+                    value={field.value}
+                    placeholder="Enter your phone number"
+                    onChange={(phone) => {
+                      field.onChange(phone); // Update react-hook-form state
+                      setValue("phoneNumber", phone); // Ensure form state is updated
+                    }}
+                  />
+                )}
+              />
+              {errors.phoneNumber && (
+                <span className="text-red-500">{errors.phoneNumber.message}</span>
+              )}
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="fullname">Full Name</label>
+              <Controller
+                name="fullName"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    type="text"
+                    id="fullname"
+                    placeholder="Your full name"
+                    {...register("fullName")}
+                    className={clsx(
+                      "w-1/2 px-3 py-2",
+                      "border border-slate-300 rounded-lg",
+                      { "border-red-500": errors.email }
+                    )}
+                  />
+                )}
+              />
+              {errors.fullName && (
+                <span className="text-red-500">{errors.fullName.message}</span>
+              )}
+            </div>
+            <div>
+              <LoadingButton context={"Next to payment"} isLoading={isLoading}/>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </BookPropertyIdPageLayout>
   );
 };
 
