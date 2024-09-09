@@ -6,29 +6,32 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
 
+type UserScheduleProps = {
+  checkinDate: string;
+  checkoutDate: string;
+};
 const DatePickerPage = () => {
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
   const [currentDate, setCurrentDate] = useState<Date | null>(new Date());
-
+  const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
   const router = useRouter();
 
-  const getUserSchedule = sessionStorage.getItem("user-schedule");
-
-  type UserScheduleProps = {
-    checkinDate: string;
-    checkoutDate: string;
-  };
-  const userSchedule: UserScheduleProps = getUserSchedule
-    ? JSON.parse(getUserSchedule)
-    : null;
   //the sessionStorage data is string, it should be Date | null
-  const parsedCheckin = getUserSchedule
-    ? new Date(userSchedule.checkinDate)
-    : null;
-  const parsedCheckout = getUserSchedule
-    ? new Date(userSchedule.checkoutDate)
-    : null;
+  const parsedCheckin = userSchedule
+  ? new Date(userSchedule.checkinDate)
+  : null;
+  const parsedCheckout = userSchedule
+  ? new Date(userSchedule.checkoutDate)
+  : null;
+  
+  useEffect(() => {
+    const getUserSchedule = sessionStorage.getItem("user-schedule");
+    const userSchedule = getUserSchedule
+      ? JSON.parse(getUserSchedule)
+      : null;
+    setUserSchedule(userSchedule)
+  }, []);
 
   useEffect(() => {
     const setUserData = () => {
@@ -38,7 +41,7 @@ const DatePickerPage = () => {
       }
     };
     setUserData();
-  }, []);
+  }, [userSchedule]);
 
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {
@@ -98,7 +101,7 @@ const DatePickerPage = () => {
         </div>
       </div>
       <div className="flex justify-center items-center">
-        {getUserSchedule ? (
+        {userSchedule ? (
           <button
             onClick={deleteUserData}
             className="px-3 p-1 mb-5 rounded bg-slate-100 border-2 border-black"

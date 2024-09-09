@@ -5,7 +5,7 @@ import { BedTypes, Property, PropertyLocation, PropertyRoomOption, RoomTypes, Ro
 import axios from "axios";
 import clsx from "clsx";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
@@ -19,6 +19,11 @@ const formSchema = z.object({
   email: z.string().min(1, "Please fill in your email address"),
   phoneNumber: z.string().min(1, "Please fill in your phone number"),
 });
+
+type UserScheduleProps = {
+  checkinDate: string;
+  checkoutDate: string;
+};
 
 interface UserDataFormPageProps {
   property: Property & {
@@ -34,25 +39,26 @@ interface UserDataFormPageProps {
 const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false)
+  const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
   const router = useRouter();
 
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
   if (!roomId) {
     return null;
-  }
-
-  const getUserSchedule = sessionStorage.getItem("user-schedule");
-  if (!getUserSchedule) {
-    router.push(`/property/${property.PropertyType}/${property.id}`);
-  }
-  type UserScheduleProps = {
-    checkinDate: string;
-    checkoutDate: string;
   };
-  const userSchedule: UserScheduleProps = getUserSchedule
-    ? JSON.parse(getUserSchedule)
-    : null;
+  
+  useEffect(() => {
+    const getUserSchedule = sessionStorage.getItem("user-schedule");
+    if (!getUserSchedule) {
+      router.push(`/property/${property.PropertyType}/${property.id}`);
+    }
+    const userSchedule: UserScheduleProps = getUserSchedule
+      ? JSON.parse(getUserSchedule)
+      : null;
+    setUserSchedule(userSchedule)
+  }, []);
+
   const checkin = userSchedule ? new Date(userSchedule.checkinDate) : null;
   const checkout = userSchedule ? new Date(userSchedule.checkoutDate) : null;
   // Calculate the difference in time (milliseconds)

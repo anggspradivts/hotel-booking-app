@@ -8,30 +8,31 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
 
+type UserScheduleProps = {
+  checkinDate: string;
+  checkoutDate: string;
+};
 const BannerSec = () => {
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
   const [currentDate, setCurrentDate] = useState<Date | null>(new Date());
-
+  const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
   const router = useRouter();
 
-  //get session storage
-  const getUserSchedule = sessionStorage.getItem("user-schedule");
+  const parsedCheckin = userSchedule
+  ? new Date(userSchedule.checkinDate)
+  : null;
+  const parsedCheckout = userSchedule
+  ? new Date(userSchedule.checkoutDate)
+  : null;
 
-  type UserScheduleProps = {
-    checkinDate: string;
-    checkoutDate: string;
-  };
-  const userSchedule: UserScheduleProps = getUserSchedule
-    ? JSON.parse(getUserSchedule)
-    : null;
-  //the sessionStorage data is string, it should be Date | null
-  const parsedCheckin = getUserSchedule
-    ? new Date(userSchedule.checkinDate)
-    : null;
-  const parsedCheckout = getUserSchedule
-    ? new Date(userSchedule.checkoutDate)
-    : null;
+  useEffect(() => {
+    const getUserSchedule = sessionStorage.getItem("user-schedule");
+    const userSchedule = getUserSchedule
+      ? JSON.parse(getUserSchedule)
+      : null;
+    setUserSchedule(userSchedule);
+  }, []);
 
   useEffect(() => {
     const setUserData = () => {
@@ -41,7 +42,7 @@ const BannerSec = () => {
       }
     };
     setUserData();
-  }, []);
+  }, [userSchedule])
 
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {
@@ -61,11 +62,9 @@ const BannerSec = () => {
     router.refresh();
   };
 
-  if (checkinDate && checkoutDate && !getUserSchedule) {
+  if (checkinDate && checkoutDate && !userSchedule) {
     setUserData(checkinDate, checkoutDate);
   }
-
-  console.log("cc", checkinDate)
 
   return (
     <div className="container h-[500px]">
@@ -110,7 +109,7 @@ const BannerSec = () => {
                 className="border-2 border-black rounded w-full"
               />
             </div>
-            {checkinDate && checkoutDate && getUserSchedule && (
+            {checkinDate && checkoutDate && userSchedule && (
               <div className="">
                 <div className="h-1/2"></div>
                 <div
