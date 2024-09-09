@@ -6,29 +6,30 @@ export async function POST(
   req: Request
 ) {
   try {
-    const midtransClient = require("midtrans-client")
     const orderData = await req.json();
     const { checkin, checkout, propertyId, roomId } = orderData;
+    const findProperty = await db.property.findUnique({
+      where: {
+        id: propertyId
+      }
+    });
     const findRoom = await db.roomTypes.findUnique({
       where: {
         id: roomId
       }
     });
-    if (!findRoom) {
-      return NextResponse.json({ message: "Invalid room" }, { status: 404 })
+    if (!findRoom || !findProperty) {
+      return NextResponse.json({ message: "Invalid room or property" }, { status: 404 })
     };
     const roomPrice = findRoom?.price ? findRoom.price.toString() : "0";
-    
-    const differenceInTime =
-    checkin && checkout ? checkout.getTime() - checkin.getTime() : null;
-    const differenceInDays = differenceInTime
-      ? differenceInTime / (1000 * 3600 * 24)
-      : null;
-    const totalCost = differenceInDays
-    ? parseFloat(roomPrice) * differenceInDays
-    : null;
+    const checkinDate = new Date(checkin);
+    const checkoutDate = new Date(checkout);
+    const differenceInTime = checkoutDate.getTime() - checkinDate.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    const totalCost = parseFloat(roomPrice) * differenceInDays;
 
     const generateOrderId = uuidv4();
+    const midtransClient = require("midtrans-client")
 
     let snap = new midtransClient.Snap({
       // Set to true if you want Production Environment (accept real transaction).
@@ -43,6 +44,10 @@ export async function POST(
       },
       "credit_card":{
           "secure" : true
+      },
+      "property_details": {
+        "id": propertyId,
+        "property_name": findProperty.name
       },
       "customer_details": {
           "first_name": orderData.firstName,
