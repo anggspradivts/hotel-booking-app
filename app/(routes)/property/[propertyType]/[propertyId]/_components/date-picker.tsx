@@ -14,7 +14,7 @@ const DatePickerPage = () => {
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
   const [currentDate, setCurrentDate] = useState<Date | null>(new Date());
-  const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
+  const [userSchedule, setUserSchedule] = useState<UserScheduleProps | null>(null)
   const router = useRouter();
 
   //the sessionStorage data is string, it should be Date | null
@@ -50,8 +50,11 @@ const DatePickerPage = () => {
       } else {
         const data = { checkinDate, checkoutDate };
         sessionStorage.setItem("user-schedule", JSON.stringify(data));
-        toast.success("Your schedule saved successfully");
-        router.refresh();
+        if(sessionStorage.getItem("user-schedule")) {
+          setUserSchedule(JSON.parse(sessionStorage.getItem("user-schedule")!));
+          toast.success("Your schedule saved successfully");
+          router.refresh();
+        }
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -62,11 +65,12 @@ const DatePickerPage = () => {
     sessionStorage.clear();
     setCheckinDate(null);
     setCheckoutDate(null);
+    setUserSchedule(null);
     router.refresh();
   };
 
   return (
-    <div className="space-y-5 bg-indigo-400">
+    <div className="space-y-5 bg-indigo-400 px-5">
       <div className="flex justify-center items-center my-8">
         <h1 className="p-5 text-lg font-bold text-white">My Schedule</h1>
       </div>
