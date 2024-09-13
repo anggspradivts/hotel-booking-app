@@ -3,7 +3,6 @@ import { fetchUserServer } from "@/utils/user";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import MyPropertyPage from "./MyPropertyPage";
-import clsx from "clsx";
 
 const Page = async () => {
   const reqHeaders = headers();
@@ -19,8 +18,8 @@ const Page = async () => {
     },
     include: {
       LocationDetails: true,
-      MainImage: true
-    }
+      MainImage: true,
+    },
   });
 
   if (!myProperty) {
@@ -29,17 +28,7 @@ const Page = async () => {
 
   return (
     <div className="md:mx-28">
-      <div
-        className={clsx(
-          "flex items-center h-[60px]",
-          "border-b border-slate-300"
-        )}
-      >
-        <h1 className={clsx("text-lg font-semibold")}>My Properties</h1>
-      </div>
-      <div className="pt-6 flex space-x-5 min-w-[400px] overflow-x-scroll">
-        <MyPropertyPage myProperty={myProperty} />
-      </div>
+      <MyPropertyPage myProperty={myProperty} />
     </div>
   );
 };

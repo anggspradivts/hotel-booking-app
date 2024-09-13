@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import { z } from "zod";
 import BookPropertyIdPageLayout from "../Layout";
+import { fetchUser, UserCredType } from "@/utils/user";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "Please fill in your first name"),
@@ -40,7 +41,12 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false)
   const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
+  const [user, setUser] = useState<UserCredType | null>(null)
   const router = useRouter();
+  
+  if (!user) {
+    
+  }
 
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
@@ -61,24 +67,6 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
 
   const checkin = userSchedule ? new Date(userSchedule.checkinDate) : null;
   const checkout = userSchedule ? new Date(userSchedule.checkoutDate) : null;
-  // Calculate the difference in time (milliseconds)
-  const differenceInTime =
-    checkin && checkout ? checkout.getTime() - checkin.getTime() : null;
-
-  // Convert the difference from milliseconds to days
-  const differenceInDays = differenceInTime
-    ? differenceInTime / (1000 * 3600 * 24)
-    : null;
-
-  const mapRoomTypes = property.RoomOption.map((roomOpt) => roomOpt.RoomTypes);
-  const findRoomType = mapRoomTypes.find((roomType) =>
-    roomType.find((room) => room.id === roomId)
-  );
-  const bookedRoom = findRoomType ? findRoomType[0] : null;
-  const roomPrice = bookedRoom?.price ? bookedRoom.price.toString() : "0";
-  const totalCost = differenceInDays
-    ? parseFloat(roomPrice) * differenceInDays
-    : null;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,16 +74,33 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
       firstName: "",
       lastName: "",
       fullName: "",
-      email: "",
+      email: user?.email || "",
       phoneNumber: "",
     },
   });
+  const { reset } = form
+
+  //reset the form if the user fetched
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await fetchUser();
+      setUser(user)
+
+      if (user) {
+        reset({
+          email: user.email || "",
+          fullName: user.name || ""
+        })
+      }
+    }
+    getUser();
+  }, [reset]);
+
   const {
     register,
     getValues,
     setValue,
     handleSubmit,
-    watch,
     control,
     formState: { errors },
   } = form;
@@ -112,8 +117,8 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
       };
       const res = await axios.post("/api/book/payment", orderData);
       if (res.status === 200) {
-        console.log(res.data);
-        // router.push(res.data.transaction.redirect_url)
+        toast.success("Redirecting...")
+        router.push(res.data.transaction.redirect_url)
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -217,6 +222,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
                     id="fullname"
                     placeholder="Your full name"
                     {...register("fullName")}
+                    value={field.value}
                     className={clsx(
                       "w-1/2 px-3 py-2",
                       "border border-slate-300 rounded-lg",

@@ -30,8 +30,6 @@ export async function POST(
     const differenceInTime = checkoutDate.getTime() - checkinDate.getTime();
     const differenceInDays = differenceInTime / (1000 * 3600 * 24);
     const totalCost = parseFloat(roomPrice) * differenceInDays;
-    console.log(checkinDate)
-    console.log(checkoutDate)
 
     let snap = new midtransClient.Snap({
       // Set to true if you want Production Environment (accept real transaction).
@@ -47,7 +45,7 @@ export async function POST(
       "credit_card":{
           "secure" : true
       },
-      "property_details": {
+      "property_details": { //doesnt appeared on order details
         "id": propertyId,
         "property_name": findProperty.name
       },
@@ -56,10 +54,11 @@ export async function POST(
           "last_name": orderData.lastName,
           "email": orderData.email,
           "phone": orderData.phoneNumber
-      }
+      },
     };
   
     const transaction = await snap.createTransaction(parameter);
+    console.log(transaction)
     const response = NextResponse.json({ message: "Success", transaction }, { status: 200 })
     return response;
   } catch (error) {

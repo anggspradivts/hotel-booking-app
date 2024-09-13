@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export const fetchUser = async () => {
+export const fetchUser = async (): Promise<UserCredType> => {
   try {
     const res = await axios.get("/api/auth/user");
     const { userId, email, name, role, message } = res.data;
@@ -33,3 +33,11 @@ export const fetchUserServer = async (reqHeaders: Headers) => {
     console.log("[ERR_FETCHUSER_SV]", error);
   }
 };
+
+export type UserCredType = {
+  userId: string | null;
+  email: string | null;
+  name: string | null;
+  role: string | null;
+  message?: string | null;
+}

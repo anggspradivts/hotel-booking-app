@@ -39,7 +39,7 @@ const PropertyTypePage = () => {
       try {
         const { name, userId } = await fetchUser();
         if (name) {
-          setUser({ id: userId, username: name });
+          setUser({ id: userId ? userId : "", username: name });
         } else {
           router.push("/unauthorized");
         }
