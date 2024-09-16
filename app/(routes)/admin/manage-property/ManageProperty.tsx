@@ -1,15 +1,21 @@
 "use client"
 import { Property } from "@prisma/client";
+import axios from "axios";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
-interface ManagePropertiesPageProps {
-  
-}
-const ManagePropertyPage = ({  }: ManagePropertiesPageProps) => {
-  const [page, setPage] = useState(1);
+const ManagePropertyPage = () => {
   const [property, setProperty] = useState<Property>();
-  const [pageSize, setPageSize] = useState(5)
+  const [pageSize, setPageSize] = useState(5);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      const response = await axios.get(`/api/admin/property/get?pageSize=${pageSize}`);
+      setProperty(response.data);
+    };
+    fetchProperty();
+  }, [pageSize]);
+
 
   return ( 
     <div className="md:px-28 space-y-5">
@@ -28,8 +34,16 @@ const ManagePropertyPage = ({  }: ManagePropertiesPageProps) => {
           <Search className="inset-0 absolute left-2 top-2 text-slate-500 h-5 w-5" />
         </div>
       </div>
+      <div id="property-container" className="">
+        {property && Array.isArray(property) && property.map((prop: Property) => (
+          <div key={prop.id}>
+            {prop.name}
+          </div>
+        ))
+        }
+      </div>
       <div>
-        <button >
+        <button onClick={() => setPageSize(pageSize + 5)}>
           load more
         </button>
       </div>
