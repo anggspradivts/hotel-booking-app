@@ -1,6 +1,8 @@
+
+import { db } from "@/lib/db";
 import ManagePropertyPage from "./ManageProperty";
 
-const page = () => {
+const page = async () => {
   return (
     <div>
       <ManagePropertyPage />

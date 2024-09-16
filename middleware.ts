@@ -1,29 +1,24 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { parse } from 'cookie';
-import { verifyToken } from '@/utils/jwt';
+import { adminPageMiddleware } from './middleware/admin-page';
+import { adminRoutesApiMiddleware } from './middleware/admin-routes-api';
 
 export async function middleware(req: NextRequest) {
-  const cookies = parse(req.headers.get('cookie') || '');
-  const token = cookies.token;
+  const url = req.nextUrl.pathname;
 
-  if (!token) {
-    const url = req.nextUrl.clone();
-    url.pathname = '/sign-in'; // Path to your login page
-    return NextResponse.redirect(url);
+  if (url.startsWith('/admin')) {
+    return adminPageMiddleware(req);
   }
 
-  const decodedToken = await verifyToken(token) as { payload: { role: string } };
-
-  if (!decodedToken || decodedToken.payload.role !== 'ADMIN') {
-    const url = req.nextUrl.clone();
-    url.pathname = '/forbidden';
-    url.searchParams.set('message', 'You do not have permission to access this page');
-    return NextResponse.redirect(url);
+  if (url.startsWith('/api/admin/property')) {
+    return adminRoutesApiMiddleware(req);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*'], // Apply this middleware to all /admin routes
+  matcher: [
+    '/admin/:path*',
+    '/api/admin/property/:path'
+  ], // Apply this middleware to all /admin routes
 };

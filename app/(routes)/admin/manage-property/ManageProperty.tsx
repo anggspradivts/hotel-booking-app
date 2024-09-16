@@ -1,6 +1,16 @@
+"use client"
+import { Property } from "@prisma/client";
 import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const ManagePropertyPage = () => {
+interface ManagePropertiesPageProps {
+  
+}
+const ManagePropertyPage = ({  }: ManagePropertiesPageProps) => {
+  const [page, setPage] = useState(1);
+  const [property, setProperty] = useState<Property>();
+  const [pageSize, setPageSize] = useState(5)
+
   return ( 
     <div className="md:px-28 space-y-5">
       <div className="flex justify-center mt-5">
@@ -17,6 +27,11 @@ const ManagePropertyPage = () => {
           />
           <Search className="inset-0 absolute left-2 top-2 text-slate-500 h-5 w-5" />
         </div>
+      </div>
+      <div>
+        <button >
+          load more
+        </button>
       </div>
     </div>
    );
