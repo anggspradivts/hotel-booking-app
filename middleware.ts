@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { adminPageMiddleware } from './middleware/admin-page';
-import { adminRoutesApiMiddleware } from './middleware/admin-routes-api';
+import { adminPageMiddleware } from './middleware/adminPage';
+import { adminRoutesApiMiddleware } from './middleware/adminRoutesApi';
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.pathname;
