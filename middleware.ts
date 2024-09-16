@@ -20,5 +20,5 @@ export const config = {
   matcher: [
     '/admin/:path*',
     '/api/admin/property/:path'
-  ], // Apply this middleware to all /admin routes
+  ],
 };
