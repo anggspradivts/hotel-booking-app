@@ -3,23 +3,34 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const pageSize = url.searchParams.get('pageSize') ?? '2';
+  const recentPropSize = url.searchParams.get('recentPropSize') ?? '2';
+  const unverPropSize = url.searchParams.get('unverPropSize') ?? '2';
 
-  const size = parseInt(pageSize, 10);
+  const recentSize = parseInt(recentPropSize, 10);
+  const unverSize = parseInt(unverPropSize, 10);
+  console.log(unverSize)
 
-  if (isNaN(size)) {
+  if (isNaN(recentSize) || isNaN(unverSize)) {
     return NextResponse.json({ error: 'Invalid page or pageSize' }, { status: 400 });
   }
 
   try {
-    const properties = await db.property.findMany({
+    const recentProperties = await db.property.findMany({
       orderBy: {
         createdAt: 'desc',
       },
-      take: size,
+      take: recentSize,
+    });
+    const unverifiedProperties = await db.property.findMany({
+      where: {
+        confirmed: false
+      },
+      take: unverSize
     });
 
-    return NextResponse.json(properties);
+    const resData = { recentProperties, unverifiedProperties }
+
+    return NextResponse.json(resData);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch properties' }, { status: 500 });
   }

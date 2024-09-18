@@ -7,7 +7,7 @@ export async function adminPageMiddleware(req: NextRequest) {
   const user = await fetchUserServer(reqHeaders);
 
   if (!user || user.role !== 'ADMIN') {
-    return NextResponse.redirect(new URL("/unauthorized", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
   return NextResponse.next();
 }

@@ -1,11 +1,12 @@
 
+import AdminLayout from "../Layout";
 import ManagePropertyPage from "./ManageProperty";
 
 const page = async () => {
   return (
-    <div>
+    <AdminLayout>
       <ManagePropertyPage />
-    </div>
+    </AdminLayout>
   );
 };
 
