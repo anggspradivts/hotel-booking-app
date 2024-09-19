@@ -1,12 +1,12 @@
 "use client";
 import { Property } from "@prisma/client";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { FileImage, List, PlusCircle, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import AdminLayout from "../Layout";
 import Image from "next/image";
-import { divIcon } from "leaflet";
+import LoadingButton from "@/components/loading-btn";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 interface ManagePropertyProps {}
 const ManagePropertyPage = ({}: ManagePropertyProps) => {
@@ -18,9 +18,14 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
   };
   const [selectedProperties, setSelectedProperties] =
     useState<selectedPropertyProp>();
-  const [selectedPropertyImg, setSelectedPropertyImg] = useState<string | null>(null);
+  const [selectedPropertyImg, setSelectedPropertyImg] = useState<string | null>(
+    null
+  );
   const [recentPropSize, setRecentPropSize] = useState(1);
   const [unverPropSize, setUnverPropSize] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -58,7 +63,27 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
     getPropertyDetails();
   }, [selectedProperties]);
 
-  console.log(selectedPropertyImg)
+  const handleVerifyProperty = async (data: {
+    id: string;
+    confirmed?: boolean;
+    name?: string;
+  }) => {
+    try {
+      setIsLoading(true);
+      const response: AxiosResponse = await axios.patch(
+        `/api/admin/property/details/patch`,
+        data
+      );
+      setSelectedProperties({ property: response.data.updatedProperty, url: "" })
+      toast.success(response.data.message)
+    } catch (error) {
+      console.error(error)
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+      router.refresh();
+    }
+  };
 
   return (
     <div className="m-5 space-y-5">
@@ -87,20 +112,46 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="bg-slate-200 text-slate-400 flex flex-col justify-center items-center w-full h-full">
+                <div className="bg-slate-200 text-slate-400 text-sm flex flex-col justify-center items-center w-full h-full">
                   <FileImage />
-                  no img provided
+                  no img provided by the author
                 </div>
               )}
             </div>
             <div>
-              <h1 className="font-semibold">{selectedProperties.property.name}</h1>
-              <p>{JSON.stringify(selectedProperties.property.createdAt)}</p>
-              <p className="italic">
+              <h1 className="font-semibold">
+                {selectedProperties.property.name}
+              </h1>
+              <p>
+                created at:{" "}
+                {new Date(
+                  selectedProperties.property.createdAt
+                ).toLocaleDateString()}
+              </p>
+              <p className="italic text-sm">
+                status:{" "}
                 {selectedProperties.property.confirmed
                   ? "verified"
                   : "unverified"}
               </p>
+              <div>
+                <LoadingButton
+                  context={
+                    selectedProperties.property.confirmed
+                      ? "unverify"
+                      : "verify"
+                  }
+                  isLoading={isLoading}
+                  handleClick={() =>
+                    handleVerifyProperty({
+                      id: selectedProperties.property.id,
+                      confirmed: selectedProperties.property.confirmed
+                        ? false
+                        : true,
+                    })
+                  }
+                />
+              </div>
             </div>
           </div>
         ) : (
@@ -161,7 +212,14 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
               Array.isArray(unverifiedProperty) &&
               unverifiedProperty.map((prop: Property) => (
                 <tr key={prop.id}>
-                  <td className="border border-gray-300 p-2">{prop.name}</td>
+                  <td
+                    onClick={() =>
+                      setSelectedProperties({ property: prop, url: "" })
+                    }
+                    className="border border-gray-300 p-2"
+                  >
+                    {prop.name}
+                  </td>
                 </tr>
               ))}
             <tr onClick={() => setUnverPropSize(unverPropSize + 5)}>
