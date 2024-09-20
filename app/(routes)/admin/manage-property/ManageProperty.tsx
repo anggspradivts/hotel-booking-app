@@ -31,8 +31,9 @@ const ManagePropertyPage = () => {
   const [searchedProperty, setSearchedProperty] = useState<Property[] | null>(
     null
   );
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const dropdownRef = useRef<HTMLDivElement | null>(null)
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   //set selected property
@@ -115,16 +116,22 @@ const ManagePropertyPage = () => {
     };
   }, [keyword]);
 
+  //handle click property on search result
   const handlePropertySearchClick = (prop: Property) => {
     setSelectedProperties({ property: prop, url: "" });
+    setKeyword("")
+    setShowDropdown(false)
     setSearchedProperty(null); // Clear the search results when selecting an item
   };
 
   // Effect to detect clicks outside of the dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setSearchedProperty(null); // Clear search results if clicked outside
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false); // Clear search results if clicked outside
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -171,23 +178,31 @@ const ManagePropertyPage = () => {
             placeholder="search property..."
             onChange={(e) => setKeyword(e.target.value)}
             value={keyword}
+            onFocus={() => setShowDropdown(true)}
           />
           <Search className="inset-0 absolute left-2 top-2 text-slate-500 h-5 w-5" />
         </div>
-        {searchedProperty && Array.isArray(searchedProperty) && (
-          <div ref={dropdownRef} className="absolute max-h-[180px] flex flex-col space-y-1 w-full bg-slate-100 p-1 cursor-pointer z-[9999] overflow-y-scroll">
-            {searchedProperty.map((prop) => (
-              <div
-                onClick={() => handlePropertySearchClick(prop)}
-                className="h-[40px] p-1 flex items-center bg-slate-200"
-              >
-                {prop.name}
-              </div>
-            ))}
+        {showDropdown && (
+          <div
+            ref={dropdownRef}
+            className="absolute max-h-[180px] min-h-[40px] flex flex-col space-y-1 w-full bg-slate-100 p-1 cursor-pointer z-[9999] overflow-y-scroll"
+          >
+            {searchedProperty ?
+              Array.isArray(searchedProperty) &&
+              searchedProperty.map((prop) => (
+                <div
+                  onClick={() => handlePropertySearchClick(prop)}
+                  className="h-[40px] p-1 flex items-center bg-slate-200"
+                >
+                  {prop.name}
+                </div>
+              )) : (
+                <div className="flex items-center p-1 text-slate-400">type something...</div>
+              )}
           </div>
         )}
       </div>
-      <div className="h-40 flex bg-slate-100 rounded">
+      <div className="h-40 flex bg-slate-50 rounded">
         {selectedProperties ? (
           <div className="p-1 w-full flex space-x-4 ">
             <div className="w-1/4 relative">
