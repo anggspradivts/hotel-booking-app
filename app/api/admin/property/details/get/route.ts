@@ -14,12 +14,19 @@ export async function GET(req: Request) {
         propertyId: propertyId
       }
     });
+    const getPropertyLocation = await db.propertyLocation.findUnique({
+      where: {
+        propertyId
+      }
+    });
 
-    if (!getPropertyImage) {
-      return NextResponse.json("")
-    }
+    const data = { getPropertyImage, getPropertyLocation };
 
-    return NextResponse.json(getPropertyImage);
+    if (!getPropertyImage || !getPropertyLocation) {
+      return NextResponse.json("");
+    };
+
+    return NextResponse.json(data);
   } catch (error) {
     console.log("[ERR_GET_PROPERTY_DETAILS_ADMIN]", error);
   }

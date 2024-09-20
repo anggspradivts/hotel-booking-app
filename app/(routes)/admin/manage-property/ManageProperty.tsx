@@ -2,31 +2,40 @@
 import { Property } from "@prisma/client";
 import axios, { AxiosResponse } from "axios";
 import { FileImage, List, PlusCircle, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import LoadingButton from "@/components/loading-btn";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { debounce } from "@/utils/debounce";
 
-interface ManagePropertyProps {}
-const ManagePropertyPage = ({}: ManagePropertyProps) => {
+type selectedPropertyProp = {
+  property: Property;
+  url: string;
+};
+type SelectedPropertyDetailsProp = {
+  img: string;
+  location: { country: string; county: string; state: string };
+};
+const ManagePropertyPage = () => {
   const [recentProperty, setRecentProperty] = useState<Property>();
   const [unverifiedProperty, setUnverifiedProperty] = useState<Property>();
-  type selectedPropertyProp = {
-    property: Property;
-    url: string;
-  };
   const [selectedProperties, setSelectedProperties] =
     useState<selectedPropertyProp>();
-  const [selectedPropertyImg, setSelectedPropertyImg] = useState<string | null>(
-    null
-  );
+  const [selectedPropertyDetails, setSelectedPropertyDetails] =
+    useState<SelectedPropertyDetailsProp | null>(null);
   const [recentPropSize, setRecentPropSize] = useState(1);
   const [unverPropSize, setUnverPropSize] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [searchedProperty, setSearchedProperty] = useState<Property[] | null>(
+    null
+  );
 
+  const dropdownRef = useRef<HTMLDivElement | null>(null)
   const router = useRouter();
 
+  //set selected property
   useEffect(() => {
     const fetchProperty = async () => {
       try {
@@ -44,9 +53,11 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
     fetchProperty();
   }, [recentPropSize, unverPropSize]);
 
+  //set selected property details
   useEffect(() => {
     const getPropertyDetails = async () => {
       try {
+        setSelectedPropertyDetails(null);
         const propertyId = selectedProperties?.property.id;
         const response = await axios.get(
           `/api/admin/property/details/get?propertyId=${propertyId}`,
@@ -54,14 +65,73 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
             params: { propertyId },
           }
         );
-        const data = response.data;
-        setSelectedPropertyImg(data.url);
+        type DataProps = {
+          getPropertyImage: {
+            url: string;
+          };
+          getPropertyLocation: {
+            country: string;
+            state: string;
+            county: string;
+          };
+        };
+        const data: DataProps = response.data;
+        setSelectedPropertyDetails({
+          img: data.getPropertyImage.url,
+          location: {
+            country: data.getPropertyLocation.country,
+            county: data.getPropertyLocation.county,
+            state: data.getPropertyLocation.state,
+          },
+        });
       } catch (error) {
         return;
       }
     };
     getPropertyDetails();
   }, [selectedProperties]);
+
+  //search property
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+    const searchProperty = async () => {
+      try {
+        const response = await axios.get(`/api/admin/property/search`, {
+          params: { keyword },
+        });
+        const data = response.data;
+        setSearchedProperty(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const debouncedSearchProperty = debounce(searchProperty, 1000);
+    debouncedSearchProperty();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [keyword]);
+
+  const handlePropertySearchClick = (prop: Property) => {
+    setSelectedProperties({ property: prop, url: "" });
+    setSearchedProperty(null); // Clear the search results when selecting an item
+  };
+
+  // Effect to detect clicks outside of the dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setSearchedProperty(null); // Clear search results if clicked outside
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
 
   const handleVerifyProperty = async (data: {
     id: string;
@@ -74,10 +144,13 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
         `/api/admin/property/details/patch`,
         data
       );
-      setSelectedProperties({ property: response.data.updatedProperty, url: "" })
-      toast.success(response.data.message)
+      setSelectedProperties({
+        property: response.data.updatedProperty,
+        url: "",
+      });
+      toast.success(response.data.message);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -88,25 +161,39 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
   return (
     <div className="m-5 space-y-5">
       <h1 className="text-xl font-semibold">Manage Property</h1>
-      <div className="">
-        <div className="relative flex items-center w-full">
+      <div className="space-y-2 relative">
+        <div className="flex items-center w-full">
           <input
             className="w-full h-full focus:outline-none border border-slate-300 p-2 pl-8 rounded-lg"
             type="search"
             name=""
             id=""
             placeholder="search property..."
+            onChange={(e) => setKeyword(e.target.value)}
+            value={keyword}
           />
           <Search className="inset-0 absolute left-2 top-2 text-slate-500 h-5 w-5" />
         </div>
+        {searchedProperty && Array.isArray(searchedProperty) && (
+          <div ref={dropdownRef} className="absolute max-h-[180px] flex flex-col space-y-1 w-full bg-slate-100 p-1 cursor-pointer z-[9999] overflow-y-scroll">
+            {searchedProperty.map((prop) => (
+              <div
+                onClick={() => handlePropertySearchClick(prop)}
+                className="h-[40px] p-1 flex items-center bg-slate-200"
+              >
+                {prop.name}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="h-40 flex bg-slate-100 rounded">
         {selectedProperties ? (
           <div className="p-1 w-full flex space-x-4 ">
             <div className="w-1/4 relative">
-              {selectedPropertyImg ? (
+              {selectedPropertyDetails ? (
                 <Image
-                  src={selectedPropertyImg || ""}
+                  src={selectedPropertyDetails.img || ""}
                   alt="property-img"
                   layout="fill"
                   className="w-full h-full object-cover"
@@ -118,23 +205,35 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
                 </div>
               )}
             </div>
-            <div>
+            <div className="flex flex-col space-y-1">
               <h1 className="font-semibold">
                 {selectedProperties.property.name}
               </h1>
-              <p>
-                created at:{" "}
-                {new Date(
-                  selectedProperties.property.createdAt
-                ).toLocaleDateString()}
-              </p>
               <p className="italic text-sm">
                 status:{" "}
                 {selectedProperties.property.confirmed
                   ? "verified"
                   : "unverified"}
               </p>
-              <div>
+              <p className="italic text-sm">
+                Location:{" "}
+                {selectedPropertyDetails ? (
+                  <span>
+                    {selectedPropertyDetails.location.country},{" "}
+                    {selectedPropertyDetails.location.state},{" "}
+                    {selectedPropertyDetails.location.county}
+                  </span>
+                ) : (
+                  "no location was provided by the author"
+                )}
+              </p>
+              <p className="italic text-sm">
+                created at:{" "}
+                {new Date(
+                  selectedProperties.property.createdAt
+                ).toLocaleDateString()}
+              </p>
+              <div className="flex space-x-3">
                 <LoadingButton
                   context={
                     selectedProperties.property.confirmed
@@ -150,6 +249,11 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
                         : true,
                     })
                   }
+                />
+                <LoadingButton
+                  context="look"
+                  isLoading={isLoading}
+                  handleClick={async () => router.push("/")}
                 />
               </div>
             </div>
@@ -182,9 +286,10 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
                     onClick={() =>
                       setSelectedProperties({ property: prop, url: "" })
                     }
-                    className="border border-gray-300 p-2"
+                    className="border border-gray-300 p-2 cursor-pointer"
                   >
-                    {prop.name}
+                    {prop.name}, date created:{" "}
+                    {new Date(prop.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
@@ -216,7 +321,7 @@ const ManagePropertyPage = ({}: ManagePropertyProps) => {
                     onClick={() =>
                       setSelectedProperties({ property: prop, url: "" })
                     }
-                    className="border border-gray-300 p-2"
+                    className="border border-gray-300 p-2 cursor-pointer"
                   >
                     {prop.name}
                   </td>

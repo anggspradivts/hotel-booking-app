@@ -1,4 +1,5 @@
 "use client";
+import clsx from "clsx";
 import { Loader2 } from "lucide-react";
 
 interface LoadingButtonProps {
@@ -9,7 +10,11 @@ interface LoadingButtonProps {
 const LoadingButton = ({ context, isLoading, handleClick }: LoadingButtonProps) => {
   return (
     <button
-      className="flex justify-center items-center p-2 bg-indigo-400 rounded text-white min-w-[80px]"
+      className={clsx(
+        "flex justify-center items-center p-2 min-w-[80px]",
+        "bg-indigo-400 rounded text-white",
+        "hover:bg-indigo-500"
+      )}
       type="submit"
       disabled={isLoading}
       onClick={handleClick}
