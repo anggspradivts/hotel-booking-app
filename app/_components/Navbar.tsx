@@ -1,9 +1,18 @@
 "use client";
 
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import UserAvatar from "@/components/user-avatar";
 import axios from "axios";
 import clsx from "clsx";
-import { Home } from "lucide-react";
+import { AlignJustify, Home, List } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import path from "path";
@@ -15,18 +24,11 @@ const Navbar = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [fullUrl, setFullUrl] = useState<string[]>([]);
-  const homepage = pathname.startsWith("/");
 
   useEffect(() => {
     const urls = pathname.split("/").filter((segment) => segment !== "");
     setFullUrl(urls);
   }, [pathname]);
-
-  // const navRoute = [
-  //   { name: "Stays", route: "/" },
-  //   { name: "Flights", route: "/flights" },
-  //   { name: "Test" },
-  // ];
 
   const generatePath = (index: number) => {
     return `/${fullUrl.slice(0, index + 1).join("/")}`;
@@ -45,33 +47,41 @@ const Navbar = () => {
           <div className="flex">
             <p className="font-semibold">Hotel Booking</p>
           </div>
-          <div className="flex">
+          <div className="flex space-x-5">
             <UserAvatar />
+            <div className="md:hidden">
+              <Sheet>
+                <SheetTrigger>
+                  <AlignJustify />
+                </SheetTrigger>
+                <SheetContent side={"bottom"} className="h-screen">
+                  <ul className="my-5 flex flex-col">
+                    <SheetClose>
+                      <li
+                        typeof="button"
+                        onClick={() => router.push("/partner")}
+                        className="text-start p-3 bg-slate-100 w-full"
+                      >
+                        List your property
+                      </li>
+                    </SheetClose>
+                  </ul>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
         <div className="hidden md:flex items-center justify-between">
           {!pathname.startsWith("/partner") && (
-            <>
-              {/* <div className="space-x-3">
-                {navRoute.map((route, index) => (
-                  <button
-                    key={index}
-                    className={clsx("px-2", "border border-white rounded-full")}
-                  >
-                    {route.name}
-                  </button>
-                ))}
-              </div> */}
-              <button
-                onClick={() => router.push("/partner")}
-                className={clsx(
-                  "hover:bg-black hover:bg-opacity-10",
-                  "p-1 rounded"
-                )}
-              >
-                List your property
-              </button>
-            </>
+            <button
+              onClick={() => router.push("/partner")}
+              className={clsx(
+                "hover:bg-black hover:bg-opacity-10",
+                "p-1 rounded"
+              )}
+            >
+              List your property
+            </button>
           )}
         </div>
       </div>
