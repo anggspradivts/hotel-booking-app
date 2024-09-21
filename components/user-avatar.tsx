@@ -2,6 +2,7 @@ import { isTokenExpired } from "@/utils/token-validity";
 import { fetchUser } from "@/utils/user";
 import axios from "axios";
 import clsx from "clsx";
+import { CircleUserRound } from "lucide-react";
 import { cookies } from "next/headers";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,16 +68,12 @@ const UserAvatar = () => {
       {name ? (
         <div className="">
           <span
-            className={clsx(
-              "px-3 p-1 rounded-full bg-slate-500 text-white",
-              "hover:bg-slate-400",
-              "transition-all duration-100"
-            )}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            {name.charAt(0)}
+            <CircleUserRound className="h-8 w-8"/>
           </span>
+          
           {isHovered && (
             <div
               onMouseEnter={() => setIsHovered(true)}
@@ -95,21 +92,14 @@ const UserAvatar = () => {
                 Logout
               </button>
               {isAdmin ? (
-                isAdminPage ? (
-                  <button
-                    onClick={() => router.push("/")}
-                    className="text-center bg-slate-500 text-white p-1 rounded"
-                  >
-                    Exit Admin Mode
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => router.push("/admin")}
-                    className="text-center bg-slate-500 text-white p-1 rounded"
-                  >
-                    Admin Mode
-                  </button>
-                )
+                <button
+                  onClick={() =>
+                    isAdminPage ? router.push("/") : router.push("/admin")
+                  }
+                  className="text-center bg-slate-500 text-white p-1 rounded"
+                >
+                  {isAdminPage ? "Exit Admin Mode" : "Admin Mode"}
+                </button>
               ) : null}
             </div>
           )}

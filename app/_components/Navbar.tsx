@@ -22,7 +22,6 @@ import toast from "react-hot-toast";
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [fullUrl, setFullUrl] = useState<string[]>([]);
 
   useEffect(() => {
@@ -51,14 +50,13 @@ const Navbar = () => {
             <UserAvatar />
             <div className="md:hidden">
               <Sheet>
-                <SheetTrigger>
-                  <AlignJustify />
+                <SheetTrigger className="flex justify-center items-center">
+                  <AlignJustify className="h-8 w-8" />
                 </SheetTrigger>
                 <SheetContent side={"bottom"} className="h-screen">
                   <ul className="my-5 flex flex-col">
                     <SheetClose>
                       <li
-                        typeof="button"
                         onClick={() => router.push("/partner")}
                         className="text-start p-3 bg-slate-100 w-full"
                       >

@@ -20,6 +20,9 @@ const Page = async () => {
       LocationDetails: true,
       MainImage: true,
     },
+    orderBy: {
+      createdAt: 'desc'
+    }
   });
 
   if (!myProperty) {
@@ -27,7 +30,7 @@ const Page = async () => {
   }
 
   return (
-    <div className="md:mx-28">
+    <div className="mx-3 md:mx-28">
       <MyPropertyPage myProperty={myProperty} />
     </div>
   );

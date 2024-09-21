@@ -5,6 +5,7 @@ import { CheckCircle, CheckCircle2, Image as LucideImage } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import LoadingButton from "@/components/loading-btn";
 
 interface MyPropertyPageProps {
   myProperty: (Property & {
@@ -14,6 +15,7 @@ interface MyPropertyPageProps {
 }
 const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
   const router = useRouter();
+
   return (
     <div>
       <div
@@ -23,19 +25,14 @@ const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
         )}
       >
         <h1 className={clsx("text-lg font-semibold")}>My Properties</h1>
-        <button
-          onClick={() => router.push("/partner/property-type")}
-          className=" inline-block bg-indigo-500 text-white px-6 py-3 rounded-lg shadow-lg font-semibold hover:bg-indigo-400"
-        >
-          List a property
-        </button>
+        <LoadingButton context="List a property" handleClick={ async () => router.push("/partner/property-type")} />
       </div>
-      <div className="pt-6 flex space-x-5 min-w-[400px] overflow-x-scroll">
+      <div className="pt-6 flex space-x-5  overflow-x-scroll">
         {myProperty.map((prop) => (
           <Link key={prop.id} href={`/partner/my-property/${prop.id}`}>
             <div
               className={clsx(
-                "h-[270px] w-[300px] rounded-lg overflow-hidden",
+                "aspect-square w-[200px] rounded-lg overflow-hidden",
                 "border border-slate-300 transition-all duration-300",
                 "hover:shadow-md"
               )}
