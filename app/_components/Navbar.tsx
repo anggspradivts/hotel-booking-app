@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import path from "path";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -14,17 +15,18 @@ const Navbar = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [fullUrl, setFullUrl] = useState<string[]>([]);
+  const homepage = pathname.startsWith("/");
 
   useEffect(() => {
     const urls = pathname.split("/").filter((segment) => segment !== "");
     setFullUrl(urls);
   }, [pathname]);
 
-  const navRoute = [
-    { name: "Stays", route: "/" },
-    { name: "Flights", route: "/flights" },
-    { name: "Test" },
-  ];
+  // const navRoute = [
+  //   { name: "Stays", route: "/" },
+  //   { name: "Flights", route: "/flights" },
+  //   { name: "Test" },
+  // ];
 
   const generatePath = (index: number) => {
     return `/${fullUrl.slice(0, index + 1).join("/")}`;
@@ -41,7 +43,7 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between">
           <div className="flex">
-            <p>Logo</p>
+            <p className="font-semibold">Hotel Booking</p>
           </div>
           <div className="flex">
             <UserAvatar />
@@ -50,7 +52,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center justify-between">
           {!pathname.startsWith("/partner") && (
             <>
-              <div className="space-x-3">
+              {/* <div className="space-x-3">
                 {navRoute.map((route, index) => (
                   <button
                     key={index}
@@ -59,7 +61,7 @@ const Navbar = () => {
                     {route.name}
                   </button>
                 ))}
-              </div>
+              </div> */}
               <button
                 onClick={() => router.push("/partner")}
                 className={clsx(
@@ -74,8 +76,8 @@ const Navbar = () => {
         </div>
       </div>
       <div className="bg-white h-10 border-b border-slate-300 md:px-28 flex items-center">
-        <ul className="flex space-x-2 ">
-          <li className="flex items-center hover:text-green-600">
+        <ul className="flex space-x-2">
+          <li className="flex items-center space-x-1 hover:text-green-600">
             <Link href="/">
               <Home className="h-5 w-5" />{" "}
             </Link>

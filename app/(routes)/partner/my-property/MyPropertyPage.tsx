@@ -18,7 +18,7 @@ const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
     <div>
       <div
         className={clsx(
-          "flex justify-between items-center  h-[60px]",
+          "flex flex-nowrap justify-between items-center h-[60px]",
           "border-b border-slate-300"
         )}
       >

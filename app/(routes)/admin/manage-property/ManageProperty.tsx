@@ -8,6 +8,7 @@ import LoadingButton from "@/components/loading-btn";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { debounce } from "@/utils/debounce";
+import clsx from "clsx";
 
 type selectedPropertyProp = {
   property: Property;
@@ -185,7 +186,10 @@ const ManagePropertyPage = () => {
         {showDropdown && (
           <div
             ref={dropdownRef}
-            className="absolute max-h-[180px] min-h-[40px] flex flex-col space-y-1 w-full bg-slate-100 p-1 cursor-pointer z-[9999] overflow-y-scroll"
+            className={clsx(
+              "absolute max-h-[180px] min-h-[40px] flex flex-col space-y-1 w-full p-1 cursor-pointer z-[9999] overflow-y-scroll",
+              "bg-slate-100 shadow-md"
+            )}
           >
             {searchedProperty ?
               Array.isArray(searchedProperty) &&

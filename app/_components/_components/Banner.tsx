@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import clsx from "clsx";
 import { Brush, BrushIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { format } from "path";
@@ -67,16 +68,19 @@ const BannerSec = () => {
   }
 
   return (
-    <div className="container h-[500px]">
+    <div className="flex justify-center h-[300px] lg:h-[500px] w-screen">
       <div
-        style={{
-          backgroundImage: `url("/hotel.jpeg")`,
-          backgroundSize: "cover",
-          backgroundColor: "rgba(0, 0, 0, 20)",
-        }}
-        className="h-full w-full"
+        // style={{
+        //   backgroundImage: `url("/hotel.jpeg")`,
+        //   backgroundSize: "cover",
+        //   backgroundColor: "rgba(0, 0, 0, 20)",
+        // }}
+        className="h-full w-full object-cover bg-indigo-500"
       >
-        <div className="w-full h-full space-y-3 flex flex-col justify-center items-center bg-black bg-opacity-20">
+        <div className={clsx(
+          "w-full h-full space-y-3 flex flex-col justify-center items-center",
+          // "bg-black bg-opacity-20"
+          )}>
           <p className="text-3xl text-white font-semibold">
             The best accomodation you can find
           </p>
@@ -121,6 +125,9 @@ const BannerSec = () => {
               </div>
             )}
           </div>
+          <p className="text-white font-semibold">
+            Manage your schedule and then choose a property 
+          </p>
         </div>
       </div>
     </div>

@@ -12,12 +12,13 @@ interface PropertySecProps {
 }
 const PropertySec = ({ property }: PropertySecProps) => {
   return (
-    <div>
+    <>
       {property.map((prop) => (
         <Link key={prop.id} href={`/property/${prop.PropertyType}/${prop.id}`}>
           <div
             className={clsx(
-              "h-[270px] w-[300px] rounded-lg overflow-hidden",
+              "w-full min-w-[180px] md:w-[300px] aspect-[10/9] rounded-lg overflow-hidden",
+              // " rounded-lg overflow-hidden",
               "border border-slate-300 transition-all duration-300",
               "hover:shadow-md"
             )}
@@ -59,7 +60,7 @@ const PropertySec = ({ property }: PropertySecProps) => {
           </div>
         </Link>
       ))}
-    </div>
+    </>
   );
 };
 
