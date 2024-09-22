@@ -79,7 +79,7 @@ const PartnerLandingPage = () => {
             <div className="grid md:grid-cols-3 gap-8">
               <div className="bg-slate-50 p-6 rounded-lg shadow-lg">
                 <h3 className="text-xl font-bold mb-4">
-                  Maximize Your Property's Potential
+                  Maximize Your Property&apos;s Potential
                 </h3>
                 <p className="text-gray-600">
                   We connect your property with a global audience actively
@@ -99,7 +99,7 @@ const PartnerLandingPage = () => {
                 <h3 className="text-xl font-bold mb-4">Marketing Expertise</h3>
                 <p className="text-gray-600">
                   We use targeted campaigns and tailored strategies to drive
-                  more traffic and bookings, ensuring your property stands out
+                  more traffic and bookings&apos; ensuring your property stands out
                   from the crowd.
                 </p>
               </div>
@@ -114,15 +114,15 @@ const PartnerLandingPage = () => {
             <div className="grid md:grid-cols-2 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <p className="text-gray-600">
-                  "Working with this company has been a fantastic experience!
-                  They helped us grow beyond our expectations."
+                  Working with this company has been a fantastic experience!
+                  They helped us grow beyond our expectations.
                 </p>
                 <h4 className="mt-4 font-bold">— Partner A</h4>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <p className="text-gray-600">
-                  "Their network and support have been invaluable in boosting
-                  our sales and expanding our reach."
+                  Their network and support have been invaluable in boosting
+                  our sales and expanding our reach.
                 </p>
                 <h4 className="mt-4 font-bold">— Partner B</h4>
               </div>

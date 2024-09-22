@@ -43,7 +43,7 @@ const BannerSec = () => {
       }
     };
     setUserData();
-  }, [userSchedule])
+  }, [userSchedule, parsedCheckin, parsedCheckout])
 
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {
@@ -70,16 +70,10 @@ const BannerSec = () => {
   return (
     <div className="flex justify-center h-[300px] lg:h-[500px] w-screen">
       <div
-        // style={{
-        //   backgroundImage: `url("/hotel.jpeg")`,
-        //   backgroundSize: "cover",
-        //   backgroundColor: "rgba(0, 0, 0, 20)",
-        // }}
         className="h-full w-full object-cover bg-indigo-500"
       >
         <div className={clsx(
           "w-full h-full space-y-3 flex flex-col justify-center items-center",
-          // "bg-black bg-opacity-20"
           )}>
           <p className="text-3xl text-white font-semibold">
             The best accomodation you can find

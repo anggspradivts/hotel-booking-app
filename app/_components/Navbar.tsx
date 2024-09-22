@@ -4,20 +4,14 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import UserAvatar from "@/components/user-avatar";
-import axios from "axios";
 import clsx from "clsx";
-import { AlignJustify, Home, List } from "lucide-react";
+import { AlignJustify, Home } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import path from "path";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 const Navbar = () => {
   const router = useRouter();

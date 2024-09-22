@@ -204,7 +204,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                           )
                             .flat()
                             .map((bed) => (
-                              <div className="">
+                              <div key={bed.id} className="">
                                 <span>Bed type: </span>
                                 <span>{bed.name}</span>
                               </div>
@@ -216,7 +216,7 @@ const PropertyDetailForm = ({ property }: PropertyDetailFormProps) => {
                           )
                             .flat()
                             .map((facility) => (
-                              <div>
+                              <div key={facility.id}>
                                 <span>Available facilities: {""}</span>
                                 <span>{facility.name}</span>
                               </div>

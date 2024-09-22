@@ -6,7 +6,7 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const propertyId = url.searchParams.get("propertyId");
     if (!propertyId) {
-      return null
+      return;
     };
     
     const getPropertyImage = await db.mainImage.findUnique({
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const data = { getPropertyImage, getPropertyLocation };
 
     if (!getPropertyImage || !getPropertyLocation) {
-      return NextResponse.json("");
+      return;
     };
 
     return NextResponse.json(data);

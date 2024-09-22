@@ -26,6 +26,7 @@ type UserScheduleProps = {
   checkoutDate: string;
 };
 
+  
 interface UserDataFormPageProps {
   property: Property & {
     LocationDetails: PropertyLocation[];
@@ -43,16 +44,9 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
   const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
   const [user, setUser] = useState<UserCredType | null>(null)
   const router = useRouter();
-  
-  if (!user) {
-    
-  }
 
   const searchParams = useSearchParams();
   const roomId = searchParams.get("roomId");
-  if (!roomId) {
-    return null;
-  };
   
   useEffect(() => {
     const getUserSchedule = sessionStorage.getItem("user-schedule");
@@ -63,7 +57,7 @@ const UserDataFormPage = ({ property }: UserDataFormPageProps) => {
       ? JSON.parse(getUserSchedule)
       : null;
     setUserSchedule(userSchedule)
-  }, []);
+  }, [property.PropertyType, property.id]);
 
   const checkin = userSchedule ? new Date(userSchedule.checkinDate) : null;
   const checkout = userSchedule ? new Date(userSchedule.checkoutDate) : null;

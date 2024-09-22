@@ -16,11 +16,12 @@ const SignInSchema = z.object({
 const SignInPage = () => {
   const [isError, setIsError] = useState(false);
   const router = useRouter();
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   const form = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),

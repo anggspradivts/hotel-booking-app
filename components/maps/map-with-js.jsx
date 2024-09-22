@@ -88,7 +88,7 @@ function LeafletControlGeocoder({ setCoordinates, propertyId }) {
         })
         .addTo(map);
     }
-  }, []);
+  }, [map]);
 
   return position === null ? null : (
     <Marker icon={icon} position={[position.lat, position.lng]}></Marker>

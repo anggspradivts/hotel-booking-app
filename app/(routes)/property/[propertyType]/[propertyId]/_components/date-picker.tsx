@@ -41,7 +41,7 @@ const DatePickerPage = () => {
       }
     };
     setUserData();
-  }, [userSchedule]);
+  }, [userSchedule, parsedCheckin, parsedCheckout]);
 
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     try {

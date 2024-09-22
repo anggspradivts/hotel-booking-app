@@ -1,13 +1,10 @@
 import { db } from "@/lib/db";
-import BookPropertyIdPageLayout from "./Layout";
 import UserDataFormPage from "./_components/user-data-form";
 
 const BookPropertyPage = async ({
   params,
-  children,
 }: {
   params: { propertyId: string };
-  children: React.ReactNode;
 }) => {
   const property = await db.property.findUnique({
     where: {

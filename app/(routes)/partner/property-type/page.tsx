@@ -3,6 +3,7 @@
 import { fetchUser } from "@/utils/user";
 import axios from "axios";
 import clsx from "clsx";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -48,7 +49,7 @@ const PropertyTypePage = () => {
       }
     };
     getUser();
-  }, []);
+  }, [router]);
 
   const handleCreateProperty = async (propertyType: string, userId: string) => {
     try {
@@ -76,7 +77,7 @@ const PropertyTypePage = () => {
             onClick={() => handleCreateProperty(prop.type, user.id)}
           >
             <div className=" flex items-center justify-center h-[100px] md:h-[300px] group relative">
-              <img
+              <Image
                 className={clsx(
                   "absolute inset-0 opacity-0 transition-opacity duration-500",
                   "group-hover:opacity-100",

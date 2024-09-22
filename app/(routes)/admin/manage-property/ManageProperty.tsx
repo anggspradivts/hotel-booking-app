@@ -120,8 +120,8 @@ const ManagePropertyPage = () => {
   //handle click property on search result
   const handlePropertySearchClick = (prop: Property) => {
     setSelectedProperties({ property: prop, url: "" });
-    setKeyword("")
-    setShowDropdown(false)
+    setKeyword("");
+    setShowDropdown(false);
     setSearchedProperty(null); // Clear the search results when selecting an item
   };
 
@@ -191,18 +191,22 @@ const ManagePropertyPage = () => {
               "bg-slate-100 shadow-md"
             )}
           >
-            {searchedProperty ?
+            {searchedProperty ? (
               Array.isArray(searchedProperty) &&
               searchedProperty.map((prop) => (
                 <div
+                  key={prop.id}
                   onClick={() => handlePropertySearchClick(prop)}
                   className="h-[40px] p-1 flex items-center bg-slate-200"
                 >
                   {prop.name}
                 </div>
-              )) : (
-                <div className="flex items-center p-1 text-slate-400">type something...</div>
-              )}
+              ))
+            ) : (
+              <div className="flex items-center p-1 text-slate-400">
+                type something...
+              </div>
+            )}
           </div>
         )}
       </div>

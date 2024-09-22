@@ -3,6 +3,7 @@
 import "leaflet/dist/leaflet.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 import "leaflet-control-geocoder"
 import L from "leaflet";
 import icon from "./constants";
@@ -24,6 +25,7 @@ interface LeafletMapViewProps {
   lng: number;
   style: React.CSSProperties
 }
+//only map view not interactive
 export const LeafletMapView = ({ lat, lng, style }: LeafletMapViewProps) => {
   return (
     <MapContainer
@@ -41,6 +43,34 @@ export const LeafletMapView = ({ lat, lng, style }: LeafletMapViewProps) => {
     </MapContainer>
   );
 };
+
+// interface GeocoderOptions {
+//   query: string;
+//   placeholder: string;
+//   defaultMarkGeocode: boolean;
+//   geocoder: L.Control.Geocoder;
+// }
+
+// interface Geocoder {
+//   (options: GeocoderOptions): L.Control;
+//   nominatim(): L.Control.Geocoder;
+//   [key: string]: () => L.Control.Geocoder;
+// }
+
+// interface MarkGeocodeEvent {
+//   geocode: {
+//     center: L.LatLng;
+//     name: string;
+//     bbox: L.LatLngBounds;
+//   };
+// }
+
+// declare namespace L.Control {
+//   class Geocoder {
+//     constructor(options: GeocoderOptions);
+//     on(eventName: "markgeocode", callback: (event: MarkGeocodeEvent) => void): this;
+//   }
+// }
 
 
 //
@@ -101,6 +131,8 @@ function LeafletControlGeocoder({ setCoordinates, propertyId }: LeafletControlGe
     },
   });
 
+  
+
   useEffect(() => {
     let geocoder = L.Control.Geocoder.nominatim();
     if (typeof URLSearchParams !== "undefined" && location.search) {
@@ -120,7 +152,7 @@ function LeafletControlGeocoder({ setCoordinates, propertyId }: LeafletControlGe
         defaultMarkGeocode: false,
         geocoder,
       })
-        .on("markgeocode", function (e) {
+        .on("markgeocode", function (e: any) {
           const latlng = e.geocode.center;
           L.marker(latlng, { icon })
             .addTo(map)
@@ -130,7 +162,7 @@ function LeafletControlGeocoder({ setCoordinates, propertyId }: LeafletControlGe
         })
         .addTo(map);
     }
-  }, []);
+  }, [map]);
 
   return position === null ? null : (
     <Marker icon={icon} position={[position.lat, position.lng]}></Marker>

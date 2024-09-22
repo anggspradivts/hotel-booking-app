@@ -7,19 +7,10 @@ import {
   RoomTypes,
   RoomTypesFacilities,
 } from "@prisma/client";
-import { z } from "zod";
 import BookedInformationPage from "./_components/booked-information";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import "react-phone-input-2/lib/style.css"; // Import the CSS for the component
 import React, { useEffect, useState } from "react";
-
-const formSchema = z.object({
-  firstName: z.string().min(1, "Please fill in your first name"),
-  lastName: z.string().min(1, "Please fill in your last name"),
-  fullName: z.string().min(1, "Please fill in your full name"),
-  email: z.string().min(1, "Please fill in your email address"),
-  phoneNumber: z.string().min(1, "Please fill in your phone number"),
-});
 
 type UserScheduleProps = {
   checkinDate: string;
@@ -42,25 +33,21 @@ const BookPropertyIdPageLayout = ({
   property,
   children,
 }: BookPropertyIdPageLayoutProps) => {
-  const [userSchedule, setUserSchedule] = useState<UserScheduleProps>()
+  const [userSchedule, setUserSchedule] = useState<UserScheduleProps>();
   const router = useRouter();
-
-  const searchParams = useSearchParams();
-  const roomId = searchParams.get("roomId");
-  if (!roomId) {
-    return null;
-  }
-
+  
   useEffect(() => {
-    const getUserSchedule = sessionStorage.getItem("user-schedule");
-    if (!getUserSchedule) {
-      router.push(`/property/${property.PropertyType}/${property.id}`);
-    }
-    const userSchedule: UserScheduleProps = getUserSchedule
-      ? JSON.parse(getUserSchedule)
-      : null;
-    setUserSchedule(userSchedule)
-  }, []);
+    const fetchUserSchedule = () => {
+      const getUserSchedule = sessionStorage.getItem("user-schedule");
+      if (!getUserSchedule) {
+        router.push(`/property/${property.PropertyType}/${property.id}`);
+      } else {
+        const userSchedule: UserScheduleProps = JSON.parse(getUserSchedule);
+        setUserSchedule(userSchedule);
+      }
+    };
+    fetchUserSchedule();
+  }, [property.PropertyType, property.id]);
 
   const getCheckin = userSchedule ? userSchedule.checkinDate : null;
   const getCheckout = userSchedule ? userSchedule.checkoutDate : null;
@@ -90,16 +77,16 @@ const BookPropertyIdPageLayout = ({
     ? new Intl.DateTimeFormat("en-US", options).format(checkout)
     : null;
 
-  type ChildProps ={
-    property: Property
-  }
+  type ChildProps = {
+    property: Property;
+  };
   const enhancedChildren = React.Children.map(children, (child) => {
     if (React.isValidElement<ChildProps>(child)) {
       return React.cloneElement(child, { property });
     }
 
     return child;
-  }); 
+  });
 
   return (
     <div className="grid md:grid-cols-2 gap-3">
@@ -113,9 +100,7 @@ const BookPropertyIdPageLayout = ({
           differenceInDays={differenceInDays}
         />
       </div>
-      <div>
-        {enhancedChildren}
-      </div>
+      <div>{enhancedChildren}</div>
     </div>
   );
 };
