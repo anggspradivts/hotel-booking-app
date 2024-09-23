@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     });
     const getPropertyLocation = await db.propertyLocation.findUnique({
       where: {
-        propertyId
+        propertyId: propertyId
       }
     });
 
