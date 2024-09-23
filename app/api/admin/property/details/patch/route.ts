@@ -20,10 +20,9 @@ export async function PATCH(req: Request) {
       data
     });
 
-    console.log(updatedProperty)
-
     return NextResponse.json({ message: "Success update property as admin", updatedProperty }, { status: 200 })
   } catch (error) {
     console.log("[ERR_PATCH_PROPERTY_DETAILS_ADMIN]", error);
+    return NextResponse.json({ message: "Error edit property details" }, { status: 500 })
   }
 }

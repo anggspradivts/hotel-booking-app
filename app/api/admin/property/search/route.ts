@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const getKeyword = url.searchParams.get("keyword");
     let response
     if (getKeyword === "") {
-      return
+      return NextResponse.json({ error: "Keyword is required" }, { status: 400 });
     } else {
       const getProperty = await db.property.findMany({
         where: {
@@ -18,6 +18,6 @@ export async function GET(req: Request) {
       return response
     }
   } catch (error) {
-    return;
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });;
   }
 }

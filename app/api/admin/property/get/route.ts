@@ -8,7 +8,6 @@ export async function GET(req: Request) {
 
   const recentSize = parseInt(recentPropSize, 10);
   const unverSize = parseInt(unverPropSize, 10);
-  console.log(unverSize)
 
   if (isNaN(recentSize) || isNaN(unverSize)) {
     return NextResponse.json({ error: 'Invalid page or pageSize' }, { status: 400 });
