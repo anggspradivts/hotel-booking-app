@@ -62,10 +62,7 @@ const ManagePropertyPage = () => {
         setSelectedPropertyDetails(null);
         const propertyId = selectedProperties?.property.id;
         const response = await axios.get(
-          `/api/admin/property/details/get?propertyId=${propertyId}`,
-          {
-            params: { propertyId },
-          }
+          `/api/admin/property/${propertyId}/details/get`
         );
         type DataProps = {
           getPropertyImage: {

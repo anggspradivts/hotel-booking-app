@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(
+  req: Request, 
+  { params }: { params: { propertyId: string } }
+) {
   try {
-    const url = new URL(req.url);
-    const propertyId = url.searchParams.get("propertyId");
+    console.log("RUNN")
+
+    const propertyId = params.propertyId;
+    console.log("TESTT", propertyId)
     if (!propertyId) {
       return NextResponse.json({ message: "No property id provided" }, { status: 400 });
     };
