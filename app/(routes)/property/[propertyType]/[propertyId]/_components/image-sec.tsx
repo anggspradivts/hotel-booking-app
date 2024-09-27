@@ -1,5 +1,5 @@
 "use client";
-import { LeafletMapView } from "@/components/maps/map";
+import { LeafletMapView } from "@/components/maps/mapV2";
 import {
   MainImage,
   Property,
