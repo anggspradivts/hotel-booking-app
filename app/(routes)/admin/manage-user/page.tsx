@@ -1,4 +1,4 @@
-
+"use server"
 import { db } from "@/lib/db";
 import { User } from "@prisma/client";
 import toast from "react-hot-toast";
