@@ -6,10 +6,7 @@ export async function GET(
   { params }: { params: { propertyId: string } }
 ) {
   try {
-    console.log("RUNN")
-
     const propertyId = params.propertyId;
-    console.log("TESTT", propertyId)
     if (!propertyId) {
       return NextResponse.json({ message: "No property id provided" }, { status: 400 });
     };
