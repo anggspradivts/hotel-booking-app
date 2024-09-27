@@ -2,13 +2,9 @@
 import { Property, PropertyLocation } from "@prisma/client";
 import clsx from "clsx";
 import { Dispatch, SetStateAction, useState } from "react";
-
 import { Pencil, X } from "lucide-react";
-import toast from "react-hot-toast";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { LeafletMapTsx, LeafletMapView } from "@/components/maps/map";
-import { MapLeafletGeocoder } from "@/components/maps/map-with-js";
+import { LeafletMap, LeafletMapView } from "@/components/maps/mapV2";
 import Link from "next/link";
 
 interface Coordinates {
@@ -25,10 +21,7 @@ const PropertyLocationForm = ({
   propertyLocation,
 }: PropertyLocationFormProps) => {
   const [isEditting, setIsEditting] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
-
-  const router = useRouter();
 
   //check if theres allready lat and lng on propertyLocation database
   const initialLocation = {
@@ -84,7 +77,7 @@ const PropertyLocationForm = ({
           />
         ) : (
           <>
-            <LeafletMapTsx
+            <LeafletMap
               initialLat={initialLocation.lat}
               initialLng={initialLocation.lng}
               setCoordinates={handleCoordinates}

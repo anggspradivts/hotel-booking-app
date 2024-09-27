@@ -28,7 +28,7 @@ const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
         <LoadingButton context="List a property" handleClick={ async () => router.push("/partner/property-type")} />
       </div>
       <div className="pt-6 flex space-x-5  overflow-x-scroll">
-        {myProperty.map((prop) => (
+        {myProperty.length > 0 ? (myProperty.map((prop) => (
           <Link key={prop.id} href={`/partner/my-property/${prop.id}`}>
             <div
               className={clsx(
@@ -85,7 +85,11 @@ const MyPropertyPage = ({ myProperty }: MyPropertyPageProps) => {
               </div>
             </div>
           </Link>
-        ))}
+        ))) : (
+          <div className="h-[300px] w-full flex justify-center items-center">
+            <p>You have no properties listed yet...</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -67,7 +67,7 @@ const PropertyTypePage = () => {
     <div className="md:px-28">
       <div className="flex justify-center items-center h-[200px]">
         <h1 className="text-4xl font-semibold text-center">
-          What type is your <span className="text-green-700">property</span>
+          What type is your <span className="text-indigo-600">property</span>
         </h1>
       </div>
       <div className="grid grid-cols-3 gap-5">
@@ -85,6 +85,7 @@ const PropertyTypePage = () => {
                 )}
                 src="/test.jpg"
                 alt="example-img"
+                layout="fill"
                 onMouseEnter={() => setIsShow(prop.id)}
                 onMouseLeave={() => setIsShow(null)}
               />

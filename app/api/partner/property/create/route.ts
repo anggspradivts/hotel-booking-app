@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { parse } from "cookie";
 import { NextResponse } from "next/server";
 import { fetchUserServer } from "@/utils/user";
 import { headers } from "next/headers";

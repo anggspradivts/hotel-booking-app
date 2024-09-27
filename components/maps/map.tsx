@@ -3,7 +3,6 @@
 import "leaflet/dist/leaflet.css";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
-import "leaflet-control-geocoder/dist/Control.Geocoder.js";
 import "leaflet-control-geocoder";
 import * as L from "leaflet";
 import icon from "./constants";
@@ -105,23 +104,23 @@ function LeafletControlGeocoder({
   });
 
   useEffect(() => {
-    // @ts-ignore
+
     let geocoder = L.Control.Geocoder.nominatim();
     if (typeof URLSearchParams !== "undefined" && location.search) {
       // parse /?geocoder=nominatim from URL
       const params = new URLSearchParams(location.search);
       const geocoderString = params.get("geocoder");
-      // @ts-ignore
+
       if (geocoderString && L.Control.Geocoder[geocoderString]) {
-        // @ts-ignore
+
         geocoder = L.Control.Geocoder[geocoderString]();
       } else if (geocoderString) {
         console.warn("Unsupported geocoder", geocoderString);
       }
     }
-    // @ts-ignore
+
     if (!map.hasLayer(L.Control.Geocoder)) {
-      // @ts-ignore
+      
       L.Control.geocoder({
         query: "",
         placeholder: "Search here...",
