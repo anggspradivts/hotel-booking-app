@@ -36,8 +36,8 @@ const Navbar = () => {
         )}
       >
         <div className="flex items-center justify-between">
-          <div className="flex">
-            <p className="font-semibold">Hotel Booking</p>
+          <div className="">
+            <p className="font-semibold hidden md:flex">Hotel Booking</p>
           </div>
           <div className="flex space-x-5">
             <UserAvatar />

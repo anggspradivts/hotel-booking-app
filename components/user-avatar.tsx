@@ -109,8 +109,8 @@ const UserAvatar = () => {
           <button
             onClick={() => router.push("/sign-in")}
             className={clsx(
-              "bg-slate-200 p-2 rounded text-black",
-              "hover:bg-slate-300"
+              "bg-indigo-400 p-2 rounded text-white min-w-[90px]",
+              "hover:bg-indigo-300"
             )}
           >
             SignIn
@@ -118,8 +118,8 @@ const UserAvatar = () => {
           <button
             onClick={() => router.push("/sign-up")}
             className={clsx(
-              "bg-slate-200 p-2 rounded text-black",
-              "hover:bg-slate-300"
+              "bg-indigo-400 p-2 rounded text-white min-w-[90px]",
+              "hover:bg-indigo-300"
             )}
           >
             SignUp
