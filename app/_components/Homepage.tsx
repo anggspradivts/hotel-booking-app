@@ -3,15 +3,15 @@ import BannerSec from "./_components/Banner";
 import PropertySec from "./_components/Property";
 
 const Homepage = async () => {
-  const getProperties = await db.property.findMany({
-    where: {
-      confirmed: true,
-    },
-    include: {
-      LocationDetails: true,
-      MainImage: true,
-    },
-  });
+  // const getProperties = await db.property.findMany({
+  //   where: {
+  //     confirmed: true,
+  //   },
+  //   include: {
+  //     LocationDetails: true,
+  //     MainImage: true,
+  //   },
+  // });
 
   return (
     <div className="lg:px-28">
@@ -22,7 +22,7 @@ const Homepage = async () => {
         <h1 className="font-bold text-3xl">Recommended for you</h1>
       </div>
       <div className="flex space-x-2 overflow-x-scroll">
-        <PropertySec property={getProperties} />
+        {/* <PropertySec property={getProperties} /> */}
       </div>
     </div>
   );
