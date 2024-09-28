@@ -1,9 +1,7 @@
 "use client";
-import axios from "axios";
 import clsx from "clsx";
-import { Brush, BrushIcon, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { format } from "path";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -73,12 +71,12 @@ const BannerSec = () => {
         className="h-full w-full object-cover bg-indigo-500"
       >
         <div className={clsx(
-          "w-full h-full space-y-3 flex flex-col justify-center items-center",
+          "w-full h-full space-y-3 md:space-y-5 flex flex-col justify-center items-center",
           )}>
-          <p className="text-3xl text-white font-semibold">
+          <p className="text-center text-3xl text-white font-semibold">
             The best accomodation you can find
           </p>
-          <div className="flex justify-center space-x-5 ">
+          <div className="flex justify-center space-x-5 text-center md:text-start">
             <div className="flex flex-col">
               <h2 className="text-white font-semibold">Checkin date:</h2>
               <DatePicker
@@ -119,7 +117,7 @@ const BannerSec = () => {
               </div>
             )}
           </div>
-          <p className="text-white font-semibold">
+          <p className="text-white font-semibold text-center">
             Manage your schedule and then choose a property 
           </p>
         </div>
