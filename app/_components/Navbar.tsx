@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Sheet,
   SheetClose,
@@ -47,7 +46,7 @@ const Navbar = () => {
                 <SheetTrigger className="flex justify-center items-center">
                   <AlignJustify className="h-8 w-8" />
                 </SheetTrigger>
-                <SheetContent side={"bottom"} className="h-screen">
+                <SheetContent side={"bottom"} className="h-3/4">
                   <ul className="my-5 flex flex-col">
                     <SheetClose>
                       <li
@@ -77,7 +76,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <div className="bg-white h-10 border-b border-slate-300 md:px-28 flex items-center">
+      <div className="hidden md:flex bg-white h-10 border-b border-slate-300 md:px-28 items-center">
         <ul className="flex space-x-2">
           <li className="flex items-center space-x-1 hover:text-green-600">
             <Link href="/">
