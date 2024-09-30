@@ -15,20 +15,22 @@ const BannerSec = () => {
   const [checkinDate, setCheckinDate] = useState<Date | null>(null);
   const [checkoutDate, setCheckoutDate] = useState<Date | null>(null);
   const [currentDate] = useState<Date | null>(new Date());
-  const [userSchedule, setUserSchedule] = useState<UserScheduleProps | null>(null)
+  const [userSchedule, setUserSchedule] = useState<UserScheduleProps | null>(
+    null
+  );
   const router = useRouter();
 
-  const parsedCheckin = userSchedule ? new Date(userSchedule.checkinDate)
-  : null;
-  const parsedCheckout = userSchedule ? new Date(userSchedule.checkoutDate)
-  : null;
+  const parsedCheckin = userSchedule
+    ? new Date(userSchedule.checkinDate)
+    : null;
+  const parsedCheckout = userSchedule
+    ? new Date(userSchedule.checkoutDate)
+    : null;
   const getUserSchedule = sessionStorage.getItem("user-schedule");
 
   //set user schedule
   useEffect(() => {
-    const userSchedule = getUserSchedule
-      ? JSON.parse(getUserSchedule)
-      : null;
+    const userSchedule = getUserSchedule ? JSON.parse(getUserSchedule) : null;
     setUserSchedule(userSchedule);
   }, []);
 
@@ -43,13 +45,16 @@ const BannerSec = () => {
     setUserData();
   }, [userSchedule]);
 
-  //set user schedule session storage and 
+  //set user schedule session storage and
   const setUserData = async (checkinDate: any, checkoutDate: any) => {
     if (!userSchedule) {
       try {
         const data = { checkinDate, checkoutDate };
-        sessionStorage.setItem("user-schedule", JSON.stringify(data));
-        setUserSchedule(data)
+        // Ensure sessionStorage is only accessed in the browser
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("user-schedule", JSON.stringify(data));
+        }
+        setUserSchedule(data);
         toast.success("User schedule saved successfully");
         router.refresh();
       } catch (error) {
@@ -66,24 +71,24 @@ const BannerSec = () => {
       setUserData(checkinDate, checkoutDate);
     }
   }, [checkinDate, checkoutDate]);
-  
+
   //
   const deleteUserData = () => {
     sessionStorage.clear();
     setCheckinDate(null);
     setCheckoutDate(null);
-    setUserSchedule(null)
+    setUserSchedule(null);
     router.refresh();
   };
 
   return (
     <div className="flex justify-center h-[300px] lg:h-[500px] w-screen">
-      <div
-        className="h-full w-full object-cover bg-indigo-500"
-      >
-        <div className={clsx(
-          "w-full h-full space-y-3 md:space-y-5 flex flex-col justify-center items-center",
-          )}>
+      <div className="h-full w-full object-cover bg-indigo-500">
+        <div
+          className={clsx(
+            "w-full h-full space-y-3 md:space-y-5 flex flex-col justify-center items-center"
+          )}
+        >
           <p className="text-center text-3xl text-white font-semibold">
             The best accomodation you can find
           </p>
@@ -129,7 +134,7 @@ const BannerSec = () => {
             )}
           </div>
           <p className="text-white font-semibold text-center">
-            Manage your schedule and then choose a property 
+            Manage your schedule and then choose a property
           </p>
         </div>
       </div>
