@@ -26,10 +26,10 @@ const BannerSec = () => {
   const parsedCheckout = userSchedule
     ? new Date(userSchedule.checkoutDate)
     : null;
-  const getUserSchedule = sessionStorage.getItem("user-schedule");
-
-  //set user schedule
+    
+    //set user schedule
   useEffect(() => {
+    const getUserSchedule = sessionStorage.getItem("user-schedule");
     const userSchedule = getUserSchedule ? JSON.parse(getUserSchedule) : null;
     setUserSchedule(userSchedule);
   }, []);
