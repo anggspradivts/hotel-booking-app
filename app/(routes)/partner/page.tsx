@@ -129,52 +129,6 @@ const PartnerLandingPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Call to Action Section */}
-        {!isPartner &&
-          <section
-            id="contact"
-            className="py-16 px-8 bg-indigo-500 text-white text-center"
-          >
-            <div className="max-w-xl mx-auto">
-              <h2 className="text-3xl font-bold mb-6">
-                Ready to Partner with Us?
-              </h2>
-              <p className="mb-6">
-                Fill out the form below, and our team will get back to you
-                shortly.
-              </p>
-              <form className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  className="w-full px-4 py-2 rounded-md focus:outline-none text-black"
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full px-4 py-2 rounded-md focus:outline-none text-black"
-                />
-                <textarea
-                  placeholder="Tell us about your business"
-                  className="w-full px-4 py-2 rounded-md focus:outline-none text-black"
-                  // rows="4"
-                ></textarea>
-                <button
-                  type="submit"
-                  className="bg-white text-indigo-500 px-6 py-3 rounded-lg shadow-lg font-semibold hover:bg-gray-100"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
-          </section>
-        }
-
-        {/* Footer */}
-        {/* <footer className="bg-gray-800 text-white py-8 text-center">
-          <p>&copy; 2024 Your Company. All rights reserved.</p>
-        </footer> */}
       </div>
     </div>
   );
